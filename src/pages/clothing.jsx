@@ -1,73 +1,57 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './categories.css';
+import productData from '../data/productData';
 
 const Clothing = () =>  {
+    const navigate = useNavigate();
+    const clothingData = productData.clothing;
 
-  return (
-          <div className="app">
-              <nav className="navbar">
-                  <div className="logo">
-                      <Link to="/home-page">
-                          <img src="/assets/logo.png" alt="Brand Logo" />
-                      </Link>
-                  </div>
-                  <ul className="nav-links">
-                      <li><Link to="/desktop">DESKTOP</Link></li>
-                      <li><Link to="/figurines">FIGURINES</Link></li>
-                      <li><Link to="/plushies">PLUSHIES</Link></li>
-                      <li><Link to="/clothing">CLOTHING</Link></li>
-                      <li><Link to="/varieties">VARIETIES</Link></li>
-                  </ul>
+   return (
+           <div className="app">
+               <nav className="navbar">
+                   <div className="logo">
+                       <Link to="/home-page">
+                           <img src="/assets/logo.png" alt="Brand Logo" />
+                       </Link>
+                   </div>
+                   <ul className="nav-links">
+                       <li><Link to="/desktop">DESKTOP</Link></li>
+                       <li><Link to="/figurines">FIGURINES</Link></li>
+                       <li><Link to="/plushies">PLUSHIES</Link></li>
+                       <li><Link to="/clothing">CLOTHING</Link></li>
+                       <li><Link to="/varieties">VARIETIES</Link></li>
+                   </ul>
                 <div className="nav-icons">
-                  {/* Icons */}
-                  <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                    <circle cx="11" cy="11" r="8" />
-                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                  </svg>
-                  <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                    <circle cx="9" cy="21" r="1" />
-                    <circle cx="20" cy="21" r="1" />
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                  </svg>
-                  <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                    <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
-                    <circle cx="12" cy="7" r="4" />
-                  </svg>
+                    {/* Icons */}
+                    <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                        <circle cx="9" cy="21" r="1" />
+                        <circle cx="20" cy="21" r="1" />
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                    </svg>
+                    <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                        <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
                 </div>
             </nav>
             <div className="product-section">
                 <h2 className="section-heading">CLOTHING</h2>
                 <div className="product-grid">
-                    {[
-                        { name: "Yuto Denim Jacket ", price: 1500, src: "/assets/clothing1.jpg" },
-                        { name: "Look at Yourself Long Sle...", price: 800, src: "/assets/clothing2.jpg" },
-                        { name: "Chrollo Hunter Denim J...", price: 1500, src: "/assets/clothing3.jpg" },
-                        { name: "Evangely Sweater ", price: 900, src: "/assets/clothing4.jpg" },
-                        { name: "Evangely Long Sleeve P...", price: 800, src: "/assets/clothing5.jpg" },
-                        { name: "Neon Genesis Knitted Lo...", price: 1700, src: "/assets/clothing6.jpg" },
-                        { name: "Phantom Gang Hoodie", price: 1100, src: "/assets/clothing7.jpg" },
-                        { name: "Akiba Overshirt Jacket", price: 2000, src: "/assets/clothing8.jpg" },
-                        { name: "Nine Tails Ninja Pants", price: 1300, src: "/assets/clothing9.jpg" },
-                        { name: "Chrollo Hunter Pants", price: 1300, src: "/assets/clothing10.jpg" },
-                        { name: "Obito Mask Killer Pants", price: 1300, src: "/assets/clothing11.jpg" },
-                        { name: "Studio Giggly Pants", price: 1300, src: "/assets/clothing12.jpg" },
-                    ].map((item, index) => (
-                        <div className="product-card" key={index}>
-                            <img src={item.src} alt={item.name} />
-                            <p className="product-name">{item.name}</p>
-                            <hr className="separator" />
-                            <div className="product-footer">
-                                <p className="product-price">₱ {item.price}</p>
-                                <button className="cart-button">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="gray" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                                        <circle cx="9" cy="21" r="1" />
-                                        <circle cx="20" cy="21" r="1" />
-                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                                    </svg>
-                                </button>
-                            </div>
+                    {clothingData.map(product => (
+                        <div 
+                            key={product.id}
+                            className="product-card" 
+                            onClick={() => navigate(`/product/${product.id}`)}
+                        >
+                            <img src={product.image} alt={product.name} />
+                            <h3>{product.name}</h3>
+                            <p className="price">{product.price}</p>
                         </div>
                     ))}
                 </div>
@@ -123,7 +107,7 @@ const Clothing = () =>  {
                 <p className="footer-bottom">&copy; 2025 Anime&You. All rights reserved.</p>
             </footer>
         </div>
-  );
+    );
 };
 
 export default Clothing;

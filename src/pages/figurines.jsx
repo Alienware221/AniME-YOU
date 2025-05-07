@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './categories.css';
+import productData from '../data/productData';
 
 const Figurines = () =>  {
+    const navigate = useNavigate();
+    const figurinesData = productData.figurines;
 
    return (
            <div className="app">
@@ -40,34 +43,15 @@ const Figurines = () =>  {
             <div className="product-section">
                 <h2 className="section-heading">FIGURINES</h2>
                 <div className="product-grid">
-                    {[
-                        { name: "Zora Figurine", price: 700, src: "/assets/figure1.jpg" },
-                        { name: "Urarabo Figurine", price: 750, src: "/assets/figure2.jpg" },
-                        { name: "Mizuri Figurine", price: 750, src: "/assets/figure3.jpg" },
-                        { name: "Sakuba Figurine ", price: 800, src: "/assets/figure4.jpg" },
-                        { name: "Choji Figurine", price: 999, src: "/assets/figure5.jpg" },
-                        { name: "Okaran Figurine", price: 700, src: "/assets/figure6.jpg" },
-                        { name: "Chainsaw Dude Figurine", price: 1400, src: "/assets/figure7.jpg" },
-                        { name: "Rengi Figurine", price: 900, src: "/assets/figure8.jpg" },
-                        { name: "Ichiro Figurine", price: 1700, src: "/assets/figure9.jpg" },
-                        { name: "Itacki Figurine", price: 1700, src: "/assets/figure10.jpg" },
-                        { name: "Natso Figurine", price: 2000, src: "/assets/figure11.jpg" },
-                        { name: "Ram Figurine", price: 700, src: "/assets/figure12.jpg" },
-                    ].map((item, index) => (
-                        <div className="product-card" key={index}>
-                            <img src={item.src} alt={item.name} />
-                            <p className="product-name">{item.name}</p>
-                            <hr className="separator" />
-                            <div className="product-footer">
-                                <p className="product-price">₱ {item.price}</p>
-                                <button className="cart-button">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="gray" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                                        <circle cx="9" cy="21" r="1" />
-                                        <circle cx="20" cy="21" r="1" />
-                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                                    </svg>
-                                </button>
-                            </div>
+                    {figurinesData.map(product => (
+                        <div 
+                            key={product.id}
+                            className="product-card" 
+                            onClick={() => navigate(`/product/${product.id}`)}
+                        >
+                            <img src={product.image} alt={product.name} />
+                            <h3>{product.name}</h3>
+                            <p className="price">{product.price}</p>
                         </div>
                     ))}
                 </div>

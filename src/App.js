@@ -10,6 +10,7 @@ import Clothing from './pages/clothing';
 import Figurines from './pages/figurines';
 import Plushies from './pages/plushies';
 import Varieties from './pages/varieties';
+import ProductPage from './pages/ProductPage';
 import './App.css';
 
 const App = () => {
@@ -26,6 +27,7 @@ const App = () => {
                 <Route path="/figurines" element={<Figurines />} />
                 <Route path="/plushies" element={<Plushies />} />
                 <Route path="/varieties" element={<Varieties />} />
+                <Route path="/product/:productId" element={<ProductPage />} />
             </Routes>
         </Router>
     );
