@@ -1,0 +1,268 @@
+/* ProductPage.css - For exclusive use with ProductPage.jsx */
+
+/* Navigation styles */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 55px;
+    overflow: hidden;
+  }
+  
+  .logo img {
+    padding-left: 5px;
+    height: 85px;
+    object-fit: contain;
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  
+  .nav-links li {
+    cursor: pointer;
+  }
+  
+  .nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+  }
+  
+  .nav-links a:hover {
+    color: #fa7878;
+  }
+  
+  /* Product detail specific styles */
+  .product-detail-container {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 2rem;
+  }
+  
+  .product-image-container {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  .product-detail-image {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+  
+  .product-info {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  .product-name {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .price {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1rem;
+  }
+  
+  .rating-container {
+    margin-bottom: 1rem;
+  }
+  
+  .rating-text {
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  .product-description {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  
+  .product-meta {
+    margin-bottom: 1.5rem;
+  }
+  
+  .product-meta p {
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+  }
+  
+  .product-meta span {
+    font-weight: bold;
+  }
+  
+  .add-to-cart-btn {
+    background-color: #1a1a1a;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .add-to-cart-btn:hover {
+    background-color: #333;
+  }
+  
+  /* Footer styles */
+  .footer {
+    background-color: #fa7878;
+    color: white;
+    padding: 3rem 2rem 2rem;
+  }
+  
+  .footer-columns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Left Column */
+  .left-column {
+    max-width: 240px;
+    padding-left: 1rem;
+  }
+  
+  .footer-logo {
+    width: auto;
+    height: 150px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+  }
+  
+  .social-icons {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .social-icons img {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+  }
+  
+  .social-icons img:hover {
+    opacity: 0.7;
+  }
+  
+  /* Footer columns */
+  .footer-column {
+    flex: 1;
+    min-width: 220px;
+  }
+  
+  .footer-heading {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #f9fafb;
+  }
+  
+  .footer-left {
+    padding-left: 1.5rem;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #f9fafb;
+  }
+  
+  .footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .footer-column li {
+    margin: 0.5rem 0;
+    cursor: pointer;
+    color: #f3f4f6;
+  }
+  
+  .footer-column li:hover {
+    text-decoration: underline;
+  }
+  
+  /* Right columns group */
+  .right-columns-group {
+    display: flex;
+    gap: 1rem;
+    position: relative;
+    flex: 1;
+  }
+  
+  .right-columns-group::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 1.5px;
+    width: 100%;
+    background-color: white;
+    border-radius: 0.5px;
+  }
+  
+  /* Subscribe form */
+  .subscribe-form {
+    margin-top: 1rem;
+    width: 100%;
+  }
+  
+  .subscribe-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+  
+  .subscribe-wrapper input {
+    width: 100%;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 0.25rem;
+    outline: none;
+  }
+  
+  .subscribe-wrapper button {
+    position: absolute;
+    right: 0.25rem;
+    padding: 0.5rem 1rem;
+    background-color: #1a1a1a;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .subscribe-wrapper button:hover {
+    background-color: #373737;
+  }
+  
+  /* Footer bottom */
+  .footer-bottom {
+    font-size: 0.85rem;
+    color: #ffffff;
+    text-align: center;
+  }
