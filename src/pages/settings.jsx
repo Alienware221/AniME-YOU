@@ -1,26 +1,24 @@
 import React from 'react';
 import { FaShoppingCart, FaHeart, FaCog, FaCreditCard, FaMapMarkerAlt } from 'react-icons/fa';
-import { Link } from 'react-router-dom'; 
-import './profile.css';
+import { Link } from 'react-router-dom';
+import './profile.css'; // Ensure this path is correct
 
-const Profile = () => {
+const Settings = () => {
   return (
-    
-       
           <div className="app">
             <nav className="navbar">
               <div className="logo">
-                <Link to="/home-page">
-                  <img src="/assets/logo.png" alt="Brand Logo" />
-                </Link>
-              </div>
-              <ul className="nav-links">
-                <li><Link to="/desktop">DESKTOP</Link></li>
-                <li><Link to="/figurines">FIGURINES</Link></li>
-                <li><Link to="/plushies">PLUSHIES</Link></li>
-                <li><Link to="/clothing">CLOTHING</Link></li>
-                <li><Link to="/varieties">VARIETIES</Link></li>
-              </ul>
+                    <Link to="/home-page">
+                        <img src="/assets/logo.png" alt="Brand Logo" />
+                    </Link>
+                </div>
+                <ul className="nav-links">
+                    <li><Link to="/desktop">DESKTOP</Link></li>
+                    <li><Link to="/figurines">FIGURINES</Link></li>
+                    <li><Link to="/plushies">PLUSHIES</Link></li>
+                    <li><Link to="/clothing">CLOTHING</Link></li>
+                    <li><Link to="/varieties">VARIETIES</Link></li>
+                </ul>
               <div className="nav-icons">
         {/* Icons */}
           <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
@@ -67,28 +65,48 @@ const Profile = () => {
           </nav>
         </aside>
         <div className="main-content">
-          <div className="order-section">
-            <h2>Completed Orders</h2>
-            <div className="order-grid">
-              {[
-                { img: 'assets/narutofigure.jpg', name: 'Naruto Figurine', price: '₱799' },
-                { img: 'assets/plush1.jpg', name: 'Hatsune Miku plushie', price: '₱650' },
-                { img: 'assets/lawmeow-one-piece.jpg', name: 'Lawmeow Plushie', price: '₱499' },
-                // Add more items as needed
-              ].map((item, index) => (
-                <div className="order-card" key={index}>
-                  <img src={item.img} alt={item.name} />
-                  <h3>{item.name}</h3>
-                  <p>{item.price}</p>
-                  <FaShoppingCart className="cart-icon" />
-                </div>
-              ))}
+          <h2>Account Settings</h2>
+          <form className="settings-form">
+          <div className="form-group">
+  <label htmlFor="username">Username</label>
+  <input type="text" id="username" placeholder="Username" defaultValue="gusion2077" />
+</div>
+            <div className="form-group">
+              <label htmlFor="name">Name</label>
+              <input type="text" id="name" placeholder="Your Name" defaultValue="EriksonLeal" />
             </div>
-          </div>
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input type="email" id="email" placeholder="Email" defaultValue="eriksonleal@gmail.com" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="phone">Phone Number</label>
+              <input type="text" id="phone" placeholder="Phone Number" defaultValue="********46" />
+            </div>
+            <div className="form-group">
+              <label>Gender</label>
+              <div>
+                <label>
+                  <input type="radio" name="gender" value="male" /> Male
+                </label>
+                <label>
+                  <input type="radio" name="gender" value="female" /> Female
+                </label>
+                <label>
+                  <input type="radio" name="gender" value="other" /> Other
+                </label>
+              </div>
+            </div>
+            <div className="form-group">
+              <label htmlFor="dob">Date of Birth</label>
+              <input type="date" id="dob" />
+            </div>
+            <button type="submit" className="save-button">Save</button>
+          </form>
         </div>
       </div>
     </div>
   );
 };
 
-export default Profile;
+export default Settings;

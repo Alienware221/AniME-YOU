@@ -17,7 +17,7 @@ const productData = {
         id: "fig-002",
         name: "Goku Super Saiyan Statue",
         price: "$49.99",
-        image: "/assets/figurines/goku-figure.jpg",
+        image: "/assets/figurines/figure2.jpg",
         description: "Premium Dragon Ball Z collectible statue featuring Goku in Super Saiyan form.",
         category: "figurines",
         inStock: true,
