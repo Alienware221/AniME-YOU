@@ -84,17 +84,17 @@ const Homepage = () => {
 
   return (
     <div className="app">
-      <nav className="navbar">
-        <div className="logo">
-          <img src="/assets/logo.png" alt="Brand Logo" />
-        </div>
-        <ul className="nav-links">
-          <li>DESKTOP</li>
-          <li>FIGURINES</li>
-          <li>PLUSHIES</li>
-          <li>CLOTHING</li>
-          <li>VARIETIES</li>
-        </ul>
+        <nav className="navbar">
+            <div className="logo">
+                <img src="/assets/logo.png" alt="Brand Logo" />
+            </div>
+            <ul className="nav-links">
+                <li><Link to="/desktop">DESKTOP</Link></li>
+                <li><Link to="/figurines">FIGURINES</Link></li>
+                <li><Link to="/plushies">PLUSHIES</Link></li>
+                <li><Link to="/clothing">CLOTHING</Link></li>
+                <li><Link to="/varieties">VARIETIES</Link></li>
+            </ul>
         <div className="nav-icons">
   {/* Icons */}
     <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
