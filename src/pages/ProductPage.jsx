@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getProductById } from '../data/productData';
-import './categories.css'; // Reusing your existing CSS
+import './categories.css';
+import { useCart } from '../contexts/CartContext';
 
 // Helper function to normalize image paths
 const normalizeImagePath = (path) => {
@@ -13,6 +14,8 @@ const normalizeImagePath = (path) => {
 const ProductPage = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const product = getProductById(productId);
   
   if (!product) {
@@ -27,6 +30,19 @@ const ProductPage = () => {
   
   // Normalize the image path
   const imagePath = normalizeImagePath(product.image);
+
+  const handleAddToCart = () => {
+    if (typeof addToCart === 'function') {
+      addToCart(product, 1);
+      setShowConfirmation(true);
+      setTimeout(() => {
+        setShowConfirmation(false);
+      }, 3000);
+    } else {
+      console.error("addToCart is not available or not a function");
+    }
+  };
+  
   
   return (
     <div className="app">
@@ -50,16 +66,20 @@ const ProductPage = () => {
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
-          <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-            <circle cx="9" cy="21" r="1" />
-            <circle cx="20" cy="21" r="1" />
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-          </svg>
-          <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-            <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
-            <circle cx="12" cy="7" r="4" />
-          </svg>
+          <Link to="/cart">
+            <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+              <circle cx="9" cy="21" r="1" />
+              <circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            </svg>
+          </Link>
+          <Link to="/profile">
+            <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
+                <circle cx="12" cy="7" r="4" />
+            </svg>
+          </Link>
         </div>
       </nav>
 
@@ -79,7 +99,7 @@ const ProductPage = () => {
           </div>
           <div className="product-info">
             <h1 className="product-name">{product.name}</h1>
-            <p className="price">{product.price}</p>
+            <p className="price">₱{product.price.toFixed(2)}</p>
             <div className="rating-container">
               <span className="rating-text">Rating: {product.rating}/5</span>
             </div>
@@ -91,7 +111,28 @@ const ProductPage = () => {
             </div>
             
             <div className="product-actions">
-              <button className="add-to-cart-btn">Add to Cart</button>
+            <button 
+              className="add-to-cart-btn" 
+              onClick={handleAddToCart}
+            >
+              {/* Optional cart icon */}
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+              </svg>
+              Add to Cart
+            </button>
+              {showConfirmation && (
+                <div className="disclaimer-overlay">
+                  <div className="disclaimer-box">
+                    <img src="/assets/logo.png" alt="Logo" className="disclaimer-logo" />
+                    <h6 className="disclaimer-header">Success!</h6>
+                    <p className="disclaimer-text">{product.name} has been added to your cart.</p>
+                    <button className="disclaimer-button" onClick={() => setShowConfirmation(false)}>Continue Shopping</button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

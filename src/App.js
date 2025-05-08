@@ -15,29 +15,53 @@ import Address from './pages/address';
 import Wishlist from './pages/wishlist';
 import Settings from './pages/settings';
 import Payment from './pages/payment';
+import Checkout from './pages/checkOut';
+import Cart from './pages/Cart';
+import SubcategoryPage from './pages/SubcategoryPage';
+import AboutFAQs from './pages/AboutFAQs';
+import { UserProvider } from './contexts/UserContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import { CartProvider } from './contexts/CartContext';
 import './App.css';
 
 const App = () => {
     return (
-        <Router>
+        <UserProvider>
+            <CartProvider> 
+            <Router>
             <Routes>
                 <Route path="/" element={<Login />} />
-                <Route path="/home-page" element={<Homepage />} />
+                <Route path="/home-page" element={
+                        <ProtectedRoute>
+                            <Homepage />
+                        </ProtectedRoute>
+                    } />
                 <Route path="/create-account" element={<CreateAccount />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/desktop" element={<Desktop />} />
-                <Route path="/clothing" element={<Clothing />} />
-                <Route path="/figurines" element={<Figurines />} />
-                <Route path="/plushies" element={<Plushies />} />
-                <Route path="/varieties" element={<Varieties />} />
-                <Route path="/product/:productId" element={<ProductPage />} />
-                <Route path="/address" element={<Address />} />
-                <Route path="/wishlist" element={<Wishlist />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/payment" element={<Payment />} />
+                <Route path="/profile" element={
+                        <ProtectedRoute>
+                            <Profile />
+                        </ProtectedRoute>
+                    } />
+                <Route path="/desktop" element={<ProtectedRoute><Desktop /></ProtectedRoute>} />
+                <Route path="/clothing" element={<ProtectedRoute><Clothing /></ProtectedRoute>} />
+                <Route path="/figurines" element={<ProtectedRoute><Figurines /></ProtectedRoute>} />
+                <Route path="/plushies" element={<ProtectedRoute><Plushies /></ProtectedRoute>} />
+                <Route path="/varieties" element={<ProtectedRoute><Varieties /></ProtectedRoute>} />
+                <Route path="/product/:productId" element={<ProtectedRoute><ProductPage /></ProtectedRoute>} />
+                <Route path="/address" element={<ProtectedRoute><Address /></ProtectedRoute>} />
+                <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+                <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                <Route path="/payments" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
+                <Route path="/checkOut" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+                <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+                <Route path="/:category/:subcategory" element={<ProtectedRoute><SubcategoryPage /></ProtectedRoute>} />
+                <Route path="/about-faqs" element={<AboutFAQs />} />
             </Routes>
         </Router>
+            </CartProvider>
+            
+        </UserProvider>
     );
 };
 

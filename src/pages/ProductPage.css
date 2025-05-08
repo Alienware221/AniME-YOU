@@ -266,3 +266,59 @@
     color: #ffffff;
     text-align: center;
   }
+
+  .confirmation-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .confirmation-box {
+    background-color: white;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .confirmation-logo {
+    width: 120px;
+    margin-bottom: 15px;
+  }
+  
+  .confirmation-header {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #2c3e50;
+  }
+  
+  .confirmation-text {
+    margin-bottom: 20px;
+    font-size: 16px;
+    color: #34495e;
+  }
+  
+  .confirmation-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+  }
+  
+  .confirmation-button:hover {
+    background-color: #2980b9;
+  }
+  

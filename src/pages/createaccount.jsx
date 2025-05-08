@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useUser } from '../contexts/UserContext';
 import './Login.css';
 
 const CreateAccount = () => {
   const navigate = useNavigate();
+  const { login } = useUser();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -14,6 +16,7 @@ const CreateAccount = () => {
   });
 
   const [errors, setErrors] = useState({});
+
 
   const validateForm = () => {
     const newErrors = {};
@@ -52,9 +55,21 @@ const CreateAccount = () => {
       return;
     }
 
-    if (window.confirm("Registration successful! Would you like to go to the homepage?")) {
-      // navigate('/home'); COMMENTED FOR NOW
-    }
+    // Create a user object with the registration data
+    const userData = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      phoneNumber: formData.phoneNumber,
+      isLoggedIn: true,
+      registrationDate: new Date().toISOString()
+    };
+
+    // Store user data and log them in
+    login(userData);
+
+    // Navigate to homepage
+    navigate('/home-page');
   };
 
   const renderInput = (name, type, placeholder) => (

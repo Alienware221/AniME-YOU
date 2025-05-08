@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './homepage.css';
+import productData from '../data/productData'; // Import the product data
 
 const Homepage = () => {
   const banners = ['/assets/Banner 2.png', '/assets/Banner 3.png', '/assets/Banner 4.png', '/assets/Banner 5.png'];
   const [current, setCurrent] = useState(0);
   const [showDisclaimer, setShowDisclaimer] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -27,60 +29,30 @@ const Homepage = () => {
     );
   }
 
-  const renderProductSection = (title, products) => (
-    <div className={`product-section ${title.toLowerCase()}-section`}>
-      <h2>{title} ──────────────────────────────────</h2>
-      <div className="product-list">
-        {products.map((product, index) => (
-          <div className="product-card" key={index}>
-            <img src={product.image} alt={product.alt} />
-            <p className="product-title">{product.title}</p>
-            <p className="product-subtitle">{product.subtitle}</p>
-            <p className="product-price">Price: {product.price}</p>
-          </div>
-        ))}
+  const renderProductSection = (title, products) => {
+    
+    return (
+      <div className={`product-section ${title.toLowerCase()}-section`}>
+        <h2>{title.toUpperCase()} ──────────────────────────────────</h2>
+        <div className="product-list">
+          {products.map((product, index) => (
+            <div 
+              className="product-card" 
+              key={index}
+              onClick={() => navigate(`/product/${product.id}`)} // Use this exact path format
+            >
+              <img src={product.image} alt={product.alt} />
+              <p className="product-name">{product.name}</p>
+              <p className="product-subtitle">{product.subtitle}</p>
+              <p className="price">₱{product.price.toFixed(2)}</p>
+            </div>
+          ))}
+        </div>
+        <Link to={`/${title.toLowerCase()}`} className="view-all">View All</Link>
       </div>
-      <button className="view-all">View All</button>
-    </div>
-  );
-
-  const productsData = {
-    DESKTOP: [
-      { image: '/assets/penholder2.jpg', alt: 'Totobo Pen Holder', title: 'Totobo Pen Holder', subtitle: 'Ghiblok Studio', price: '₱250' },
-      { image: '/assets/mousepad1.jpg', alt: 'Nagik Deskmat', title: 'Nagik Deskmat', subtitle: 'Blue Block', price: '₱300' },
-      { image: '/assets/nb4.jpg', alt: 'Mikasasa Notebook', title: 'Mikasasa Notebook', subtitle: 'Attack on Simplicio', price: '₱150' },
-      { image: '/assets/penholder1.jpg', alt: 'Giga Chad Pen Holder', title: 'Giga Chad Pen Holder', subtitle: 'Attack on Dwaine', price: '₱200' },
-      { image: '/assets/mousepad6.jpg', alt: 'Gengare Deskmat', title: 'Gengare Deskmat', subtitle: 'Pokermon', price: '₱400' },
-    ],
-    FIGURINES: [
-      { image: '/assets/figure10.jpg', alt: 'Itacho Figurine', title: 'Itacho Figurine', subtitle: 'Nauto', price: '₱950' },
-      { image: '/assets/figure3.jpg', alt: 'Demon Lover Figurine', title: 'Demon Lover Figurine', subtitle: 'Demon Lover', price: '₱1,200' },
-      { image: '/assets/figure11.jpg', alt: 'Naku Figurine', title: 'Naku Figurine', subtitle: 'Fairy the Platypus', price: '₱1,050' },
-      { image: '/assets/figure12.jpg', alt: 'Remmy Figurine', title: 'Remmy Figurine', subtitle: 'Re: One', price: '₱980' },
-      { image: '/assets/figure4.jpg', alt: 'Sabura Figurine', title: 'Sabura Figurine', subtitle: 'Narito', price: '₱990' },
-    ],
-    PLUSHIES: [
-      { image: '/assets/plush3.jpg', alt: 'Picante Plush', title: 'Picante Plush', subtitle: 'Taco', price: '₱400' },
-      { image: '/assets/plush11.jpg', alt: 'Gengare Plush', title: 'Gengare Plush', subtitle: 'Pokermon', price: '₱450' },
-      { image: '/assets/plush10.jpg', alt: 'Bonito Plush', title: 'Bonito Plush', subtitle: 'Jujubsu Kraizen', price: '₱400' },
-      { image: '/assets/plush7.jpg', alt: 'Flyhigh Plush', title: 'Flyhigh Plush', subtitle: 'Haiyaa', price: '₱350' },
-      { image: '/assets/plush12.jpg', alt: 'Bombardilo Plush', title: 'Bombardilo Plush', subtitle: 'Pokermon', price: '₱450' },
-    ],
-    CLOTHING: [
-      { image: '/assets/clothing8.jpg', alt: 'Akina Jacket', title: 'Akina Jacket', subtitle: 'Akina', price: '₱1,200' },
-      { image: '/assets/clothing4.jpg', alt: 'Evangeline Sweater', title: 'Evangeline Sweater', subtitle: 'Evangeline', price: '₱850' },
-      { image: '/assets/clothing11.jpg', alt: 'Niloko Pants', title: 'Niloko Pants', subtitle: 'Nauto', price: '₱1,400' },
-      { image: '/assets/clothing5.jpg', alt: 'Evangeline Long-sleeve Polo', title: 'Evangeline Long-sleeve Polo', subtitle: 'Evangeline', price: '₱900' },
-      { image: '/assets/clothing7.jpg', alt: 'Phantom Tropa Hoodie', title: 'Phantom Tropa Hoodie', subtitle: 'HunterxHunger', price: '₱1,250' },
-    ],
-    VARIETIES: [
-      { image: '/assets/key2.jpg', alt: 'JK Keychain', title: 'JK Keychain', subtitle: 'JK Lang', price: '₱100' },
-      { image: '/assets/pin2.jpg', alt: 'Demon Lover Pin', title: 'Demon Lover Pin', subtitle: 'Demon Lover', price: '₱70' },
-      { image: '/assets/poster5.jpg', alt: 'Akina Poster', title: 'Akina Poster', subtitle: 'Akina', price: '₱300' },
-      { image: '/assets/key3.jpg', alt: 'Chain Slayer Keychain', title: 'Chain Slayer Keychain', subtitle: 'Chain Slayer', price: '₱100' },
-      { image: '/assets/poster4.jpg', alt: 'Di Pinili Poster', title: 'Di Pinili Poster', subtitle: 'Two Piece', price: '₱300' },
-    ],
-  };
+    );
+  };  
+  
 
   return (
     <div className="app">
@@ -89,34 +61,72 @@ const Homepage = () => {
                 <img src="/assets/logo.png" alt="Brand Logo" />
             </div>
             <ul className="nav-links">
-                <li><Link to="/desktop">DESKTOP</Link></li>
-                <li><Link to="/figurines">FIGURINES</Link></li>
-                <li><Link to="/plushies">PLUSHIES</Link></li>
-                <li><Link to="/clothing">CLOTHING</Link></li>
-                <li><Link to="/varieties">VARIETIES</Link></li>
+              <li>
+                <Link to="/desktop">DESKTOP</Link>
+                <ul className="dropdown-menu">
+                  <li><Link to="/desktop/mousepad">Mousepad</Link></li>
+                  <li><Link to="/desktop/stationeries">Stationer</Link></li>
+                  <li><Link to="/desktop/mousepads">Mousepads</Link></li>
+                </ul>
+              </li>
+              <li>
+                <Link to="/figurines">FIGURINES</Link>
+                <ul className="dropdown-menu">
+                  <li><Link to="/figurines/anime">Anime Figurines</Link></li>
+                  <li><Link to="/figurines/movie">Movie Characters</Link></li>
+                  <li><Link to="/figurines/limited">Limited Editions</Link></li>
+                </ul>
+              </li>
+              <li>
+                <Link to="/plushies">PLUSHIES</Link>
+                <ul className="dropdown-menu">
+                  <li><Link to="/plushies/animal">Animal Plushies</Link></li>
+                  <li><Link to="/plushies/character">Character Plushies</Link></li>
+                  <li><Link to="/plushies/collectable">Collectable Plushies</Link></li>
+                </ul>
+              </li>
+              <li>
+                <Link to="/clothing">CLOTHING</Link>
+                <ul className="dropdown-menu">
+                  <li><Link to="/clothing/t-shirts">T-Shirts</Link></li>
+                  <li><Link to="/clothing/hoodies">Hoodies</Link></li>
+                  <li><Link to="/clothing/accessories">Accessories</Link></li>
+                </ul>
+              </li>
+              <li>
+                <Link to="/varieties">VARIETIES</Link>
+                <ul className="dropdown-menu">
+                  <li><Link to="/varieties/mousepads">Mousepads</Link></li>
+                  <li><Link to="/varieties/gaming-accessories">Gaming Accessories</Link></li>
+                  <li><Link to="/varieties/collectibles">Collectibles</Link></li>
+                </ul>
+              </li>
             </ul>
-        <div className="nav-icons">
-  {/* Icons */}
-    <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-      <circle cx="11" cy="11" r="8" />
-      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
 
-  
-    <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-      <circle cx="9" cy="21" r="1" />
-      <circle cx="20" cy="21" r="1" />
-      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-    </svg>
-  
-  <Link to="/profile">
-    <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-      <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
-      <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
-      <circle cx="12" cy="7" r="4" />
-    </svg>
-  </Link>
-</div>
+        <div className="nav-icons">
+          {/* Icons */}
+            <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+
+          
+            <Link to="/cart">
+              <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+              </svg>
+            </Link>
+          
+          <Link to="/profile">
+            <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+              <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </Link>
+        </div>
       </nav>
 
       {/* Carousel */}
@@ -124,7 +134,7 @@ const Homepage = () => {
         <img src={banners[current]} alt={`Banner ${current + 1}`} />
       </div>
 
-      {Object.entries(productsData).map(([title, products]) => renderProductSection(title, products))}
+      {Object.entries(productData).map(([title, products]) => renderProductSection(title, products))}
 
       {/* Footer */}
       <footer className="footer">
@@ -132,15 +142,17 @@ const Homepage = () => {
           {/* Left Column */}
           <div className="footer-column left-column">
             <img src="/assets/logo.png" alt="Logo" className="footer-logo" />
-            <h3 className="footer-left">Follow Us</h3>
-            <div className="social-icons">
-              <img src="/assets/fb.png" alt="Facebook" />
-              <img src="/assets/ig.png" alt="Instagram" />
-              <img src="/assets/tt.png" alt="TikTok" />
+            <div className="social-links">
+              <h3 className="footer-left">Follow Us</h3>
+              <div className="social-icons">
+                <img src="/assets/fb.png" alt="Facebook" />
+                <img src="/assets/ig.png" alt="Instagram" />
+                <img src="/assets/tt.png" alt="TikTok" />
+              </div>
             </div>
           </div>
 
-          {/* Right Columns Group */}
+          {/* Right Column */}
           <div className="right-columns-group">
             <div className="footer-column">
               <h3 className="footer-heading">Customer Support</h3>
@@ -156,7 +168,7 @@ const Homepage = () => {
               <ul>
                 <li>All Products</li>
                 <li>New Offers</li>
-                <li>About Us</li>
+                <li><Link to="/about-faqs">About Us</Link></li>
                 <li>Homepage</li>
               </ul>
             </div>
@@ -175,6 +187,8 @@ const Homepage = () => {
 
         <p className="footer-bottom">&copy; 2025 Anime&You. All rights reserved.</p>
       </footer>
+
+
     </div>
   );
 };
