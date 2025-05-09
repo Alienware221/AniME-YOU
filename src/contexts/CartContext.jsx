@@ -1,7 +1,8 @@
 // CartContext.jsx
 import React, { createContext, useState, useContext } from 'react';
 
-const CartContext = createContext();
+// Add export here
+export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
     const [cart, setCart] = useState([]);
@@ -14,7 +15,6 @@ export const CartProvider = ({ children }) => {
         }
         
         // Update the cart state using your cart state setter
-        // Make sure this matches the actual name of your state setter
         setCart(prevCart => 
           prevCart.map(item => 
             item.id === productId ? {...item, quantity: newQuantity} : item
@@ -36,7 +36,6 @@ export const CartProvider = ({ children }) => {
             }
         });
     };
-
 
     const removeFromCart = (productId) => {
         setCart(prevCart => prevCart.filter(item => item.id !== productId));

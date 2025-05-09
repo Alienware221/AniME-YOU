@@ -1,13 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './homepage.css';
-import productData from '../data/productData'; // Import the product data
 
 const Homepage = () => {
   const banners = ['/assets/Banner 2.png', '/assets/Banner 3.png', '/assets/Banner 4.png', '/assets/Banner 5.png'];
   const [current, setCurrent] = useState(0);
   const [showDisclaimer, setShowDisclaimer] = useState(true);
+  const [productData, setProductData] = useState({});
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      console.log('Starting to fetch products...');
+      const response = await fetch('http://localhost:5000/api/products');
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch products');
+      }
+      
+      const products = await response.json();
+      console.log('Products from API:', products); // Check what data is being received
+      console.log('Number of products received:', products.length);
+      
+      // Organize products by category
+      const categorizedProducts = products.reduce((acc, product) => {
+        const category = product.category;
+        if (!acc[category]) {
+          acc[category] = [];
+        }
+        acc[category].push(product);
+        return acc;
+      }, {});
+      
+      console.log('Categorized products:', categorizedProducts); // Check the structure
+      console.log('Categories found:', Object.keys(categorizedProducts));
+      
+      setProductData(categorizedProducts);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      setLoading(false);
+    }
+  };
+  
+  fetchProducts();
+}, []);
+
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -29,21 +70,27 @@ const Homepage = () => {
     );
   }
 
+  //Loading Indicator
+  if (loading) {
+    return <div className="loading">Loading products...</div>;
+  }
+
   const renderProductSection = (title, products) => {
+    if (!products || products.length === 0) return null;
     
     return (
       <div className={`product-section ${title.toLowerCase()}-section`}>
         <h2>{title.toUpperCase()} ──────────────────────────────────</h2>
         <div className="product-list">
-          {products.map((product, index) => (
+          {products.slice(0, 4).map((product, index) => (
             <div 
               className="product-card" 
-              key={index}
-              onClick={() => navigate(`/product/${product.id}`)} // Use this exact path format
+              key={product._id} // Use MongoDB _id
+              onClick={() => navigate(`/product/${product._id}`)} // Use MongoDB _id
             >
-              <img src={product.image} alt={product.alt} />
+              <img src={product.image} alt={product.name} />
               <p className="product-name">{product.name}</p>
-              <p className="product-subtitle">{product.subtitle}</p>
+              <p className="product-subtitle">{product.description.substring(0, 30)}...</p>
               <p className="price">₱{product.price.toFixed(2)}</p>
             </div>
           ))}
@@ -58,23 +105,29 @@ const Homepage = () => {
     <div className="app">
         <nav className="navbar">
             <div className="logo">
-                <img src="/assets/logo.png" alt="Brand Logo" />
+                <Link to="/home-page">
+                    <img src="/assets/logo.png" alt="Brand Logo" />
+                </Link>
             </div>
             <ul className="nav-links">
               <li>
                 <Link to="/desktop">DESKTOP</Link>
                 <ul className="dropdown-menu">
-                  <li><Link to="/desktop/mousepad">Mousepad</Link></li>
-                  <li><Link to="/desktop/stationeries">Stationer</Link></li>
-                  <li><Link to="/desktop/mousepads">Mousepads</Link></li>
+                  <li><Link to="/desktop/mousepad">Mousepads</Link></li>
+                  <li><Link to="/desktop/deskorganizers">Desk Organizers</Link></li>
+                  <li><Link to="/desktop/wallart">Wall Art</Link></li>
+                  <li><Link to="/desktop/desklamps">Desk Lamps</Link></li>
+                  <li><Link to="/desktop/coasters">Coasters</Link></li>
                 </ul>
               </li>
               <li>
                 <Link to="/figurines">FIGURINES</Link>
                 <ul className="dropdown-menu">
-                  <li><Link to="/figurines/anime">Anime Figurines</Link></li>
-                  <li><Link to="/figurines/movie">Movie Characters</Link></li>
-                  <li><Link to="/figurines/limited">Limited Editions</Link></li>
+                  <li><Link to="/figurines/figures">Scaled Figures</Link></li>
+                  <li><Link to="/figurines/nendoroids">Nendoroids</Link></li>
+                  <li><Link to="/figurines/acrylic">Acrylic Stands</Link></li>
+                  <li><Link to="/figurines/mini">Mini Figurines</Link></li>
+                  <li><Link to="/figurines/gacha">Gachapons</Link></li>
                 </ul>
               </li>
               <li>
@@ -82,7 +135,9 @@ const Homepage = () => {
                 <ul className="dropdown-menu">
                   <li><Link to="/plushies/animal">Animal Plushies</Link></li>
                   <li><Link to="/plushies/character">Character Plushies</Link></li>
-                  <li><Link to="/plushies/collectable">Collectable Plushies</Link></li>
+                  <li><Link to="/plushies/keychain">Keychain Plushies</Link></li>
+                  <li><Link to="/plushies/pillow">Pillow Plushies</Link></li>
+                  <li><Link to="/plushies/blanket">Blanket Plushies</Link></li>
                 </ul>
               </li>
               <li>
@@ -91,14 +146,18 @@ const Homepage = () => {
                   <li><Link to="/clothing/t-shirts">T-Shirts</Link></li>
                   <li><Link to="/clothing/hoodies">Hoodies</Link></li>
                   <li><Link to="/clothing/accessories">Accessories</Link></li>
+                  <li><Link to="/clothing/cosplay">Cosplays</Link></li>
+                  <li><Link to="/clothing/socks">Socks</Link></li>
                 </ul>
               </li>
               <li>
                 <Link to="/varieties">VARIETIES</Link>
                 <ul className="dropdown-menu">
-                  <li><Link to="/varieties/mousepads">Mousepads</Link></li>
-                  <li><Link to="/varieties/gaming-accessories">Gaming Accessories</Link></li>
-                  <li><Link to="/varieties/collectibles">Collectibles</Link></li>
+                  <li><Link to="/varieties/manga">Manga</Link></li>
+                  <li><Link to="/varieties/dvd">Anime DVDs and Blurays</Link></li>
+                  <li><Link to="/varieties/books">Art Books</Link></li>
+                  <li><Link to="/varieties/novels">Light Novels</Link></li>
+                  <li><Link to="/varieties/games">Videogames</Link></li>
                 </ul>
               </li>
             </ul>

@@ -22,6 +22,7 @@ import AboutFAQs from './pages/AboutFAQs';
 import { UserProvider } from './contexts/UserContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import { CartProvider } from './contexts/CartContext';
+import AdminDashboard from './components/AdminDashboard';
 import './App.css';
 
 const App = () => {
@@ -56,7 +57,9 @@ const App = () => {
                 <Route path="/checkOut" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
                 <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
                 <Route path="/:category/:subcategory" element={<ProtectedRoute><SubcategoryPage /></ProtectedRoute>} />
-                <Route path="/about-faqs" element={<AboutFAQs />} />
+                <Route path="/about-faqs" element={<ProtectedRoute><AboutFAQs /></ProtectedRoute>} />
+                <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+
             </Routes>
         </Router>
             </CartProvider>
