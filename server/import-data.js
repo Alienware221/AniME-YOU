@@ -7,7 +7,7 @@ const productData = require('../src/data/productData').products; // Adjust path 
 dotenv.config();
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect('mongodb+srv://qydffarro:TofuEats1@cluster0.q1owwie.mongodb.net/animeShop')
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
 
