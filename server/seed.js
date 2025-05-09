@@ -170,7 +170,7 @@ clothing: [
 const seedDatabase = async () => {
   try {
     // Connect to MongoDB
-    await mongoose.connect('mongodb://localhost:27017/animeShop', {
+    await mongoose.connect('mongodb+srv://qydffarro:TofuEats1@cluster0.q1owwie.mongodb.net/animeShop', {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
