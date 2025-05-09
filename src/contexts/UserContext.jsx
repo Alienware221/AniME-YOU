@@ -1,7 +1,8 @@
 // src/contexts/UserContext.jsx
 import React, { createContext, useState, useEffect, useContext } from 'react';
 
-const UserContext = createContext(null);
+// Add export here to make the context available outside this file
+export const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);

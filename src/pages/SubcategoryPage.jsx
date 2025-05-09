@@ -1,41 +1,36 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import './categories.css';
-import productData from '../data/productData';
 
 const SubcategoryPage = () => {
     const navigate = useNavigate();
     const { category, subcategory } = useParams();
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     
-    // Get the appropriate data based on category and subcategory
-    let products = [];
     let categoryTitle = '';
     let subcategoryTitle = '';
     
-    // Set up titles and data based on URL parameters
+    // Set category title based on URL parameter
     switch (category) {
         case 'desktop':
             categoryTitle = 'DESKTOP';
-            products = productData.desktop.filter(item => item.subcategory === subcategory);
             break;
         case 'figurines':
             categoryTitle = 'FIGURINES';
-            products = productData.figurines.filter(item => item.subcategory === subcategory);
             break;
         case 'plushies':
             categoryTitle = 'PLUSHIES';
-            products = productData.plushies.filter(item => item.subcategory === subcategory);
             break;
         case 'clothing':
             categoryTitle = 'CLOTHING';
-            products = productData.clothing.filter(item => item.subcategory === subcategory);
             break;
         case 'varieties':
             categoryTitle = 'VARIETIES';
-            products = productData.varieties.filter(item => item.subcategory === subcategory);
             break;
         default:
-            products = [];
+            categoryTitle = '';
     }
     
     // Format subcategory title (convert from kebab-case to title case)
@@ -43,6 +38,42 @@ const SubcategoryPage = () => {
         .split('-')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ');
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                console.log('Starting to fetch products...');
+                const response = await fetch('http://localhost:5000/api/products');
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch products');
+                }
+                
+                const allProducts = await response.json();
+                console.log('All products from API:', allProducts);
+                console.log('Number of products received:', allProducts.length);
+                
+                // Filter products by category and subcategory
+                const filteredProducts = allProducts.filter(product => 
+                    product.category === category && 
+                    product.subcategory === subcategory
+                );
+                
+                console.log(`Filtered products for ${category}/${subcategory}:`, filteredProducts);
+                console.log('Number of filtered products:', filteredProducts.length);
+                
+                setProducts(filteredProducts);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching products:', error);
+                setError('Failed to load products. Please try again later.');
+                setLoading(false);
+            }
+        };
+        
+        fetchProducts();
+    }, [category, subcategory]);
 
     return (
         <div className="app">
@@ -56,17 +87,21 @@ const SubcategoryPage = () => {
                     <li>
                     <Link to="/desktop">DESKTOP</Link>
                     <ul className="dropdown-menu">
-                        <li><Link to="/desktop/mousepad">Mousepad</Link></li>
-                        <li><Link to="/desktop/stationeries">Stationeries</Link></li>
-                        <li><Link to="/desktop/mousepads">Mousepads</Link></li>
+                        <li><Link to="/desktop/mousepad">Mousepads</Link></li>
+                        <li><Link to="/desktop/deskorganizers">Desk Organizers</Link></li>
+                        <li><Link to="/desktop/wallart">Wall Art</Link></li>
+                        <li><Link to="/desktop/desklamps">Desk Lamps</Link></li>
+                        <li><Link to="/desktop/coasters">Coasters</Link></li>
                     </ul>
                     </li>
                     <li>
                     <Link to="/figurines">FIGURINES</Link>
                     <ul className="dropdown-menu">
-                        <li><Link to="/figurines/anime">Anime Figurines</Link></li>
-                        <li><Link to="/figurines/movie">Movie Characters</Link></li>
-                        <li><Link to="/figurines/limited">Limited Editions</Link></li>
+                        <li><Link to="/figurines/figures">Scaled Figures</Link></li>
+                        <li><Link to="/figurines/nendoroids">Nendoroids</Link></li>
+                        <li><Link to="/figurines/acrylic">Acrylic Stands</Link></li>
+                        <li><Link to="/figurines/mini">Mini Figurines</Link></li>
+                        <li><Link to="/figurines/gacha">Gachapons</Link></li>
                     </ul>
                     </li>
                     <li>
@@ -74,7 +109,9 @@ const SubcategoryPage = () => {
                     <ul className="dropdown-menu">
                         <li><Link to="/plushies/animal">Animal Plushies</Link></li>
                         <li><Link to="/plushies/character">Character Plushies</Link></li>
-                        <li><Link to="/plushies/collectable">Collectable Plushies</Link></li>
+                        <li><Link to="/plushies/keychain">Keychain Plushies</Link></li>
+                        <li><Link to="/plushies/pillow">Pillow Plushies</Link></li>
+                        <li><Link to="/plushies/blanket">Blanket Plushies</Link></li>
                     </ul>
                     </li>
                     <li>
@@ -83,54 +120,64 @@ const SubcategoryPage = () => {
                         <li><Link to="/clothing/t-shirts">T-Shirts</Link></li>
                         <li><Link to="/clothing/hoodies">Hoodies</Link></li>
                         <li><Link to="/clothing/accessories">Accessories</Link></li>
+                        <li><Link to="/clothing/cosplay">Cosplays</Link></li>
+                        <li><Link to="/clothing/socks">Socks</Link></li>
                     </ul>
                     </li>
                     <li>
                     <Link to="/varieties">VARIETIES</Link>
                     <ul className="dropdown-menu">
-                        <li><Link to="/varieties/mousepads">Mousepads</Link></li>
-                        <li><Link to="/varieties/gaming-accessories">Gaming Accessories</Link></li>
-                        <li><Link to="/varieties/collectibles">Collectibles</Link></li>
+                        <li><Link to="/varieties/manga">Manga</Link></li>
+                        <li><Link to="/varieties/dvd">Anime DVDs and Blurays</Link></li>
+                        <li><Link to="/varieties/books">Art Books</Link></li>
+                        <li><Link to="/varieties/novels">Light Novels</Link></li>
+                        <li><Link to="/varieties/games">Videogames</Link></li>
                     </ul>
                     </li>
                 </ul>
-                <div className="nav-icons">
-                    {/* Icons */}
+    
+            <div className="nav-icons">
+                {/* Icons */}
+                <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+    
+                
+                <Link to="/cart">
                     <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                        <circle cx="11" cy="11" r="8" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    <circle cx="9" cy="21" r="1" />
+                    <circle cx="20" cy="21" r="1" />
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
                     </svg>
-                    <Link to="/cart">
-                        <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                            <circle cx="9" cy="21" r="1" />
-                            <circle cx="20" cy="21" r="1" />
-                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                        </svg>
-                    </Link>
-                    <Link to="/profile">
-                        <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                            <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
-                            <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
-                            <circle cx="12" cy="7" r="4" />
-                        </svg>
-                    </Link>
-                </div>
+                </Link>
+                
+                <Link to="/profile">
+                <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                    <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
+                    <circle cx="12" cy="7" r="4" />
+                </svg>
+                </Link>
+            </div>
             </nav>
             <div className="product-section">
                 <h2 className="section-heading">{categoryTitle}: {subcategoryTitle}</h2>
                 
+                {loading && <p className="loading">Loading products...</p>}
+                {error && <p className="error-message">{error}</p>}
+                
                 <div className="product-grid">
-                    {products.length > 0 ? (
+                    {!loading && products.length > 0 ? (
                         products.map(product => (
                             <div 
-                                key={product.id}
+                                key={product._id || product.id}
                                 className="product-card" 
-                                onClick={() => navigate(`/product/${product.id}`)}
+                                onClick={() => navigate(`/product/${product._id || product.id}`)}
                             >
                                 <div className="product-image-container">
-                                    {/* Make sure the image path starts with a forward slash if it's relative to public folder */}
                                     <img 
-                                        src={product.image.startsWith('/') ? product.image : `/${product.image}`} 
+                                        src={product.image} 
                                         alt={product.name || 'Product image'} 
                                         onError={(e) => {
                                             e.target.onerror = null; 
@@ -140,13 +187,12 @@ const SubcategoryPage = () => {
                                 </div>
                                 <div className="product-info">
                                     <h3>{product.name}</h3>
-                                    <p className="product-price">{product.price}</p>
+                                    <p className="product-price">₱{product.price?.toFixed(2) || 'Price unavailable'}</p>
                                 </div>
-
                             </div>
                         ))
                     ) : (
-                        <p className="no-products">No products found in this subcategory.</p>
+                        !loading && <p className="no-products">No products found in this subcategory.</p>
                     )}
                 </div>
             </div>

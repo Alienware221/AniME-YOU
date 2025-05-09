@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { getProductById } from '../data/productData';
 import './categories.css';
 import { useCart } from '../contexts/CartContext';
 
@@ -16,9 +15,37 @@ const ProductPage = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const [showConfirmation, setShowConfirmation] = useState(false);
-  const product = getProductById(productId);
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
-  if (!product) {
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/products/${productId}`);
+        
+        if (!response.ok) {
+          throw new Error('Product not found');
+        }
+        
+        const data = await response.json();
+        setProduct(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching product:', error);
+        setError(error.message);
+        setLoading(false);
+      }
+    };
+    
+    fetchProduct();
+  }, [productId]);
+  
+  if (loading) {
+    return <div className="loading-container">Loading product details...</div>;
+  }
+  
+  if (error || !product) {
     return (
       <div className="not-found-container">
         <h2>Product Not Found</h2>

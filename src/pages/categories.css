@@ -158,6 +158,7 @@ font-size: 1.5rem;
 font-weight: bold;
 margin-bottom: 1.5rem;
 position: relative;
+color: #000;
 }
 
 .section-heading::after {
