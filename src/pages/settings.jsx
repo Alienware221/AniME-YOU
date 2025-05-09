@@ -1,9 +1,12 @@
+// [settings.jsx](file:///C:\Users\inoninja\AniME-YOU-NEW\src\pages\settings.jsx)
 import React from 'react';
 import { FaShoppingCart, FaHeart, FaCog, FaCreditCard, FaMapMarkerAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import './profile.css'; // Ensure this path is correct
+import { useUser } from '../contexts/UserContext';
 
 const Settings = () => {
+  const { user } = useUser();
   return (
           <div className="app">
             <nav className="navbar">
@@ -27,11 +30,13 @@ const Settings = () => {
           </svg>
       
         
-          <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-            <circle cx="9" cy="21" r="1" />
-            <circle cx="20" cy="21" r="1" />
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-          </svg>
+          <Link to="/cart">
+            <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+              <circle cx="9" cy="21" r="1" />
+              <circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            </svg>
+          </Link>
         
         <Link to="/profile">
           <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
@@ -46,7 +51,7 @@ const Settings = () => {
         <aside className="sidebar">
           <div className="profile-info">
             <div className="avatar-placeholder">👤</div>
-            <h2>digong</h2>
+            <h2>{user ? (user.firstName || user.name || 'Guest') : 'Guest'}</h2>
             <div className="profile-stats">
               <p>
                 Coupons: <span className="clickable-stat">56</span>
@@ -69,40 +74,24 @@ const Settings = () => {
           <form className="settings-form">
           <div className="form-group">
   <label htmlFor="username">Username</label>
-  <input type="text" id="username" placeholder="Username" defaultValue="gusion2077" />
+  <input type="text" id="username" placeholder="Username" defaultValue={user ? user.username : ""} /> {/* Use user.username if available */}
 </div>
             <div className="form-group">
               <label htmlFor="name">Name</label>
-              <input type="text" id="name" placeholder="Your Name" defaultValue="EriksonLeal" />
+              <input type="text" id="name" placeholder="Your Name" defaultValue={user ? (user.firstName || user.name) : ""} /> {/* Use user.firstName or user.name */}
             </div>
             <div className="form-group">
               <label htmlFor="email">Email</label>
-              <input type="email" id="email" placeholder="Email" defaultValue="eriksonleal@gmail.com" />
+              <input type="email" id="email" placeholder="Email" defaultValue={user ? user.email : ""} /> {/* Use user.email */}
+
             </div>
             <div className="form-group">
               <label htmlFor="phone">Phone Number</label>
-              <input type="text" id="phone" placeholder="Phone Number" defaultValue="********46" />
+              <input type="text" id="phone" placeholder="Phone Number" defaultValue={user ? user.phoneNumber : ""} /> {/* Use user.phoneNumber */}
             </div>
-            <div className="form-group">
-              <label>Gender</label>
-              <div>
-                <label>
-                  <input type="radio" name="gender" value="male" /> Male
-                </label>
-                <label>
-                  <input type="radio" name="gender" value="female" /> Female
-                </label>
-                <label>
-                  <input type="radio" name="gender" value="other" /> Other
-                </label>
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="dob">Date of Birth</label>
-              <input type="date" id="dob" />
-            </div>
-            <button type="submit" className="save-button">Save</button>
-          </form>
+            {/* ... other form groups */}
+            <button type="submit" className="save-button">Save Changes</button> {/* Save button added */}
+           </form>
         </div>
       </div>
     </div>

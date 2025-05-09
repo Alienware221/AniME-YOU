@@ -28,11 +28,13 @@ const Clothing = () =>  {
                         <circle cx="11" cy="11" r="8" />
                         <line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
-                    <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                    <Link to="/cart">
+                        <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                         <circle cx="9" cy="21" r="1" />
                         <circle cx="20" cy="21" r="1" />
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                    </svg>
+                        </svg>
+                    </Link>
                      <Link to="/profile">
                         <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                           <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
@@ -53,7 +55,7 @@ const Clothing = () =>  {
                         >
                             <img src={product.image} alt={product.name} />
                             <h3>{product.name}</h3>
-                            <p className="price">{product.price}</p>
+                            <p className="price">₱{product.price.toFixed(2)}</p>
                         </div>
                     ))}
                 </div>
