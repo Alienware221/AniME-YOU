@@ -14,7 +14,7 @@ const Homepage = () => {
   const fetchProducts = async () => {
     try {
       console.log('Starting to fetch products...');
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://animeyoubackend.onrender.com';
       const response = await fetch(`${API_URL}/api/admin/products`);
       console.log('Response status:', response.status);
       

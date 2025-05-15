@@ -1,11 +1,53 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './categories.css';
-import productData from '../data/productData';
 
-const Figurines = () =>  {
+const Figurines = () => {
     const navigate = useNavigate();
-    const figurinesData = productData.figurines;
+    const [figurinesData, setFigurinesData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const loadProducts = async () => {
+            try {
+                setLoading(true);
+                // Use the direct fetch approach
+                const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://animeyoubackend.onrender.com';
+                const response = await fetch(`${API_URL}/api/admin/products`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch products');
+                }
+                
+                const products = await response.json();
+                console.log('All products:', products);
+                
+                // Filter only figurine products
+                const figurineProducts = products.filter(product => 
+                    product.category === 'figurines'
+                );
+                
+                console.log('Figurine products:', figurineProducts);
+                setFigurinesData(figurineProducts);
+            } catch (err) {
+                console.error('Failed to fetch figurine products:', err);
+                setError('Failed to load products. Please try again later.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadProducts();
+    }, []);
+
+    if (loading) {
+        return <div className="loading">Loading...</div>;
+    }
+
+    if (error) {
+        return <div className="error-message">{error}</div>;
+    }
 
    return (
            <div className="app">
@@ -98,9 +140,9 @@ const Figurines = () =>  {
                 <div className="product-grid">
                     {figurinesData.map(product => (
                         <div 
-                            key={product.id}
+                            key={product._id || product.id} // Use _id if that's what your MongoDB uses
                             className="product-card" 
-                            onClick={() => navigate(`/product/${product.id}`)}
+                            onClick={() => navigate(`/product/${product._id || product.id}`)}
                         >
                             <img src={product.image} alt={product.name} />
                             <h3>{product.name}</h3>

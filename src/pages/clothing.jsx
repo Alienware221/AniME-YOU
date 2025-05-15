@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'; // Import hooks from React
 import { useNavigate, Link } from 'react-router-dom';
 import './categories.css';
-import { fetchProductsByCategory } from '../services/productService';
 
     const Clothing = () => {
     const navigate = useNavigate();
@@ -14,7 +13,7 @@ import { fetchProductsByCategory } from '../services/productService';
             try {
                 setLoading(true);
                 // Use the direct fetch approach that works in your homepage
-                const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+                const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://animeyoubackend.onrender.com';
                 const response = await fetch(`${API_URL}/api/admin/products`);
                 
                 if (!response.ok) {

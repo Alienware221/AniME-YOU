@@ -22,7 +22,8 @@ const ProductPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/products/${productId}`);
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://animeyoubackend.onrender.com';
+        const response = await fetch(`${API_URL}/api/products/${productId}`);
         
         if (!response.ok) {
           throw new Error('Product not found');
@@ -73,42 +74,90 @@ const ProductPage = () => {
   
   return (
     <div className="app">
-      {/* Navbar - Matching the structure from your categories pages */}
-      <nav className="navbar">
-        <div className="logo">
-          <Link to="/home-page">
-            <img src="/assets/logo.png" alt="Brand Logo" />
-          </Link>
-        </div>
-        <ul className="nav-links">
-          <li><Link to="/desktop">DESKTOP</Link></li>
-          <li><Link to="/figurines">FIGURINES</Link></li>
-          <li><Link to="/plushies">PLUSHIES</Link></li>
-          <li><Link to="/clothing">CLOTHING</Link></li>
-          <li><Link to="/varieties">VARIETIES</Link></li>
-        </ul>
-        <div className="nav-icons">
-          {/* Icons - Using the same SVG icons as in your categories pages */}
-          <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <Link to="/cart">
-            <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-              <circle cx="9" cy="21" r="1" />
-              <circle cx="20" cy="21" r="1" />
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-            </svg>
-          </Link>
-          <Link to="/profile">
-            <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
-                <circle cx="12" cy="7" r="4" />
-            </svg>
-          </Link>
-        </div>
-      </nav>
+                   <nav className="navbar">
+                               <div className="logo">
+                                    <Link to="/home-page">
+                                        <img src="/assets/logo.png" alt="Brand Logo" />
+                                    </Link>
+                                </div>
+                               <ul className="nav-links">
+                                 <li>
+                                   <Link to="/desktop">DESKTOP</Link>
+                                   <ul className="dropdown-menu">
+                                     <li><Link to="/desktop/mousepad">Mousepads</Link></li>
+                                     <li><Link to="/desktop/deskorganizers">Desk Organizers</Link></li>
+                                     <li><Link to="/desktop/wallart">Wall Art</Link></li>
+                                     <li><Link to="/desktop/desklamps">Desk Lamps</Link></li>
+                                     <li><Link to="/desktop/coasters">Coasters</Link></li>
+                                   </ul>
+                                 </li>
+                                 <li>
+                                   <Link to="/figurines">FIGURINES</Link>
+                                   <ul className="dropdown-menu">
+                                     <li><Link to="/figurines/figures">Scaled Figures</Link></li>
+                                     <li><Link to="/figurines/nendoroids">Nendoroids</Link></li>
+                                     <li><Link to="/figurines/acrylic">Acrylic Stands</Link></li>
+                                     <li><Link to="/figurines/mini">Mini Figurines</Link></li>
+                                     <li><Link to="/figurines/gacha">Gachapons</Link></li>
+                                   </ul>
+                                 </li>
+                                 <li>
+                                   <Link to="/plushies">PLUSHIES</Link>
+                                   <ul className="dropdown-menu">
+                                     <li><Link to="/plushies/animal">Animal Plushies</Link></li>
+                                     <li><Link to="/plushies/character">Character Plushies</Link></li>
+                                     <li><Link to="/plushies/keychain">Keychain Plushies</Link></li>
+                                     <li><Link to="/plushies/pillow">Pillow Plushies</Link></li>
+                                     <li><Link to="/plushies/blanket">Blanket Plushies</Link></li>
+                                   </ul>
+                                 </li>
+                                 <li>
+                                   <Link to="/clothing">CLOTHING</Link>
+                                   <ul className="dropdown-menu">
+                                     <li><Link to="/clothing/t-shirts">T-Shirts</Link></li>
+                                     <li><Link to="/clothing/hoodies">Hoodies</Link></li>
+                                     <li><Link to="/clothing/accessories">Accessories</Link></li>
+                                     <li><Link to="/clothing/cosplay">Cosplays</Link></li>
+                                     <li><Link to="/clothing/socks">Socks</Link></li>
+                                   </ul>
+                                 </li>
+                                 <li>
+                                   <Link to="/varieties">VARIETIES</Link>
+                                   <ul className="dropdown-menu">
+                                     <li><Link to="/varieties/manga">Manga</Link></li>
+                                     <li><Link to="/varieties/dvd">Anime DVDs and Blurays</Link></li>
+                                     <li><Link to="/varieties/books">Art Books</Link></li>
+                                     <li><Link to="/varieties/novels">Light Novels</Link></li>
+                                     <li><Link to="/varieties/games">Videogames</Link></li>
+                                   </ul>
+                                 </li>
+                               </ul>
+                   
+                           <div className="nav-icons">
+                             {/* Icons */}
+                               <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                                 <circle cx="11" cy="11" r="8" />
+                                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                               </svg>
+                   
+                             
+                               <Link to="/cart">
+                                 <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                                   <circle cx="9" cy="21" r="1" />
+                                   <circle cx="20" cy="21" r="1" />
+                                   <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                                 </svg>
+                               </Link>
+                             
+                             <Link to="/profile">
+                               <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                                 <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
+                                 <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
+                                 <circle cx="12" cy="7" r="4" />
+                               </svg>
+                             </Link>
+                           </div>
+                         </nav>
 
       {/* Product Details Section */}
       <div className="product-section">

@@ -1,13 +1,15 @@
-// Change from axios-browser (which wasn't installed) to regular axios
-import axios from 'axios';
+// src/services/productService.js
+const API_URL = 'https://animeyoubackend.onrender.com'; // Adjust if needed
 
 export const fetchProductsByCategory = async (category) => {
   try {
-    // Make sure your API endpoint is correct
-    const response = await axios.get(`/api/products/${category}`);
-    return response.data;
+    const response = await fetch(`${API_URL}/api/products/category/${category}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch products: ${response.status} ${response.statusText}`);
+    }
+    return await response.json();
   } catch (error) {
-    console.error(`Error fetching ${category} products:`, error);
+    console.error('Error in fetchProductsByCategory:', error);
     throw error;
   }
 };

@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import './AdminDashboard.css';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://animeyoubackend.onrender.com';
+
 const CATEGORIES = [
   'Desktop',
   'Clothing',
@@ -41,7 +43,7 @@ const AdminDashboard = () => {
 
   const fetchProducts = async () => {
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://anime-you-one.vercel.app/';
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://animeyoubackend.onrender.com';
       const response = await fetch(`${API_URL}/api/admin/products`);
       if (!response.ok) throw new Error('Failed to fetch products');
       
@@ -94,8 +96,8 @@ const AdminDashboard = () => {
     
     try {
       const url = isEditing 
-        ? `http://localhost:5000/api/admin/products/${currentProduct._id}`
-        : 'http://localhost:5000/api/admin/products';
+        ? `${API_URL}/api/admin/products/${currentProduct._id}`
+        : `${API_URL}/api/admin/products`;
       
       const method = isEditing ? 'PUT' : 'POST';
       
@@ -111,7 +113,7 @@ const AdminDashboard = () => {
       // Only append image if it's a new file (not a URL string)
       if (formData.image instanceof File) {
         productData.append('image', formData.image);
-      } else if (isEditing && formData.image) {
+      } else if (isEditing && formData.image && typeof formData.image === 'string') {
         // When editing, pass the existing image URL if no new file selected
         productData.append('imageUrl', formData.image);
       }
@@ -122,16 +124,22 @@ const AdminDashboard = () => {
         price: formData.price,
         category: formData.category.toLowerCase(),
         subcategory: formData.subcategory.toLowerCase(),
-        countInStock: formData.countInStock
+        countInStock: formData.countInStock,
+        imageType: typeof formData.image,
+        isFile: formData.image instanceof File,
+        imageUrl: typeof formData.image === 'string' ? formData.image : 'No string image'
       });
+
       
       const response = await fetch(url, {
         method,
-        // Don't set Content-Type header, let the browser set it with the boundary
         body: productData
       });
 
-      if (!response.ok) throw new Error(`Failed to ${isEditing ? 'update' : 'create'} product`);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Failed to ${isEditing ? 'update' : 'create'} product: ${errorData.message || response.statusText}`);
+      }
       
       console.log("Product updated successfully, refreshing data");
       
@@ -164,7 +172,7 @@ const AdminDashboard = () => {
     if (!window.confirm('Are you sure you want to delete this product?')) return;
     
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/products/${id}`, {
+      const response = await fetch(`${API_URL}/api/admin/products/${id}`, {
         method: 'DELETE'
       });
 

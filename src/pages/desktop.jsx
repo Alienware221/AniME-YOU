@@ -1,13 +1,57 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './categories.css';
-import productData from '../data/productData';
+import { fetchProductsByCategory } from '../services/productService';
 
-const Desktop = () =>  {
+const Desktop = () => {
     const navigate = useNavigate();
-    const desktopData = productData.desktop;
+    const [desktopData, setDesktopData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-   return (
+    useEffect(() => {
+    const loadProducts = async () => {
+        try {
+            setLoading(true);
+            // Use the direct fetch approach that works in your homepage
+            const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://animeyoubackend.onrender.com';
+            const response = await fetch(`${API_URL}/api/admin/products`);
+            
+            if (!response.ok) {
+                throw new Error('Failed to fetch products');
+            }
+            
+            const products = await response.json();
+            console.log('All products:', products);
+            
+            // Filter only desktop products
+            const desktopProducts = products.filter(product => 
+                product.category === 'desktop'
+            );
+            
+            console.log('Desktop products:', desktopProducts);
+            setDesktopData(desktopProducts);
+        } catch (err) {
+            console.error('Failed to fetch desktop products:', err);
+            setError('Failed to load products. Please try again later.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+        loadProducts();
+    }, []);
+
+
+    if (loading) {
+        return <div className="loading">Loading...</div>;
+    }
+
+    if (error) {
+        return <div className="error-message">{error}</div>;
+    }
+
+    return (
            <div className="app">
                <nav className="navbar">
                            <div className="logo">
@@ -98,9 +142,9 @@ const Desktop = () =>  {
                 <div className="product-grid">
                     {desktopData.map(product => (
                         <div 
-                            key={product.id}
+                            key={product._id || product.id} // Use _id if that's what your MongoDB uses
                             className="product-card" 
-                            onClick={() => navigate(`/product/${product.id}`)}
+                            onClick={() => navigate(`/product/${product._id || product.id}`)}
                         >
                             <img src={product.image} alt={product.name} />
                             <h3>{product.name}</h3>
