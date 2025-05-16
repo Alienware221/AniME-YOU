@@ -7,7 +7,7 @@ const Product = require('../models/Product');
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
-    cb(null, 'uploads/');
+    cb(null, 'server/uploads/');
   },
   filename: function(req, file, cb) {
     cb(null, `${Date.now()}-${file.originalname}`);
@@ -56,7 +56,7 @@ router.post('/products', upload.single('image'), async (req, res) => {
       price,
       category,
       subcategory,
-      image: `/uploads/${req.file.filename}`,
+      image: `server/uploads/${req.file.filename}`,
       countInStock
     });
     
@@ -83,7 +83,7 @@ router.put('/products/:id', upload.single('image'), async (req, res) => {
     // Handle image updates
     if (req.file) {
       // If a new file was uploaded
-      updateData.image = `/uploads/${req.file.filename}`;
+      updateData.image = `server/uploads/${req.file.filename}`;
     } else if (req.body.imageUrl) {
       // If keeping the existing image
       updateData.image = req.body.imageUrl;
