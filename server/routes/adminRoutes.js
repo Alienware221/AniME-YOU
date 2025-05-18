@@ -6,6 +6,7 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('cloudinary').v2;
 const Product = require('../models/Product');
 
+
 // Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -20,6 +21,7 @@ const storage = new CloudinaryStorage({
     folder: 'anime-you-products',
     allowed_formats: ['jpg', 'jpeg', 'png', 'gif'],
     transformation: [{ width: 500, height: 500, crop: 'limit' }]
+
   }
 });
 
@@ -65,7 +67,9 @@ router.post('/products', upload.single('image'), async (req, res) => {
       price,
       category,
       subcategory,
+
       image: req.file.path, // Cloudinary URL is stored here
+
       countInStock
     });
     
@@ -91,8 +95,10 @@ router.put('/products/:id', upload.single('image'), async (req, res) => {
 
     // Handle image updates
     if (req.file) {
+
       // If a new file was uploaded to Cloudinary
       updateData.image = req.file.path;
+
     } else if (req.body.imageUrl) {
       // If keeping the existing image
       updateData.image = req.body.imageUrl;
