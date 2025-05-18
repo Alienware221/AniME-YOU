@@ -113,9 +113,9 @@ const AdminDashboard = () => {
       // Only append image if it's a new file (not a URL string)
       if (formData.image instanceof File) {
         productData.append('image', formData.image);
-      } else if (isEditing && formData.image && typeof formData.image === 'string') {
+      } else if (isEditing && currentProduct.image) {
         // When editing, pass the existing image URL if no new file selected
-        productData.append('imageUrl', formData.image);
+        productData.append('imageUrl', currentProduct.image);
       }
       
       console.log("Submitting form data:", {
@@ -137,8 +137,9 @@ const AdminDashboard = () => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(`Failed to ${isEditing ? 'update' : 'create'} product: ${errorData.message || response.statusText}`);
+        const errorText = await response.text();
+        console.error('Server response:', errorText);
+        throw new Error(`Failed to ${isEditing ? 'update' : 'create'} product: ${response.statusText}`);
       }
       
       console.log("Product updated successfully, refreshing data");

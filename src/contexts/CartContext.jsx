@@ -17,28 +17,42 @@ export const CartProvider = ({ children }) => {
         // Update the cart state using your cart state setter
         setCart(prevCart => 
           prevCart.map(item => 
-            item.id === productId ? {...item, quantity: newQuantity} : item
+            (item.id === productId || item._id === productId) ? {...item, quantity: newQuantity} : item
           )
         );
       };
 
     const addToCart = (product, quantity) => {
+        // Ensure the product has a consistent id property
+        const productWithConsistentId = {
+            ...product,
+            id: product._id || product.id // Use _id if available, otherwise use id
+        };
+
         setCart(prevCart => {
-            const existingItem = prevCart.find(item => item.id === product.id);
+            // Check for existing item using both id and _id to be safe
+            const existingItem = prevCart.find(item => 
+                (item.id === productWithConsistentId.id) || 
+                (item._id && item._id === productWithConsistentId._id)
+            );
+            
             if (existingItem) {
                 return prevCart.map(item =>
-                    item.id === product.id
+                    (item.id === productWithConsistentId.id || 
+                    (item._id && item._id === productWithConsistentId._id))
                         ? { ...item, quantity: item.quantity + quantity }
                         : item
                 );
             } else {
-                return [...prevCart, { ...product, quantity }];
+                return [...prevCart, { ...productWithConsistentId, quantity }];
             }
         });
     };
 
     const removeFromCart = (productId) => {
-        setCart(prevCart => prevCart.filter(item => item.id !== productId));
+        setCart(prevCart => prevCart.filter(item => 
+            item.id !== productId && (item._id ? item._id !== productId : true)
+        ));
     };
 
     const clearCart = () => {
