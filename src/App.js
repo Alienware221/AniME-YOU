@@ -23,49 +23,77 @@ import { UserProvider } from './contexts/UserContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import { CartProvider } from './contexts/CartContext';
 import AdminDashboard from './components/AdminDashboard';
+import UserManagement from './components/admin/UserManagement';
+import OrderManagement from './components/admin/OrderManagement';
 import './App.css';
-
-const App = () => {
-    return (
-        <UserProvider>
-            <CartProvider> 
-            <Router>
-            <Routes>
-                <Route path="/" element={<Login />} />
-                <Route path="/home-page" element={
-                        <ProtectedRoute>
-                            <Homepage />
-                        </ProtectedRoute>
-                    } />
-                <Route path="/create-account" element={<CreateAccount />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/profile" element={
-                        <ProtectedRoute>
-                            <Profile />
-                        </ProtectedRoute>
-                    } />
-                <Route path="/desktop" element={<ProtectedRoute><Desktop /></ProtectedRoute>} />
-                <Route path="/clothing" element={<ProtectedRoute><Clothing /></ProtectedRoute>} />
-                <Route path="/figurines" element={<ProtectedRoute><Figurines /></ProtectedRoute>} />
-                <Route path="/plushies" element={<ProtectedRoute><Plushies /></ProtectedRoute>} />
-                <Route path="/varieties" element={<ProtectedRoute><Varieties /></ProtectedRoute>} />
-                <Route path="/product/:productId" element={<ProtectedRoute><ProductPage /></ProtectedRoute>} />
-                <Route path="/address" element={<ProtectedRoute><Address /></ProtectedRoute>} />
-                <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
-                <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-                <Route path="/payments" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
-                <Route path="/checkOut" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-                <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
-                <Route path="/:category/:subcategory" element={<ProtectedRoute><SubcategoryPage /></ProtectedRoute>} />
-                <Route path="/about-faqs" element={<ProtectedRoute><AboutFAQs /></ProtectedRoute>} />
-                <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-
-            </Routes>
-        </Router>
-            </CartProvider>
+function App() {
+  return (
+    <Router>
+      <UserProvider>
+        <CartProvider>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/" element={<Login />} />
+            <Route path="/create-account" element={<CreateAccount />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/home-page" element={<Homepage />} />
+            <Route path="/about-faqs" element={<AboutFAQs />} />
+            <Route path="/product/:productId" element={<ProductPage />} />
+            <Route path="/desktop" element={<Desktop />} />
+            <Route path="/clothing" element={<Clothing />} />
+            <Route path="/figurines" element={<Figurines />} />
+            <Route path="/plushies" element={<Plushies />} />
+            <Route path="/varieties" element={<Varieties />} />
+            <Route path="/:category/:subcategory" element={<SubcategoryPage />} />
             
-        </UserProvider>
-    );
-};
+            {/* User-only routes */}
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } />
+            <Route path="/cart" element={
+              <ProtectedRoute>
+                <Cart />
+              </ProtectedRoute>
+            } />
+            <Route path="/checkout" element={
+              <ProtectedRoute>
+                <Checkout />
+              </ProtectedRoute>
+            } />
+            <Route path="/address" element={
+              <ProtectedRoute>
+                <Address />
+              </ProtectedRoute>
+            } />
+            <Route path="/wishlist" element={
+              <ProtectedRoute>
+                <Wishlist />
+              </ProtectedRoute>
+            } />
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            } />
+            <Route path="/payments" element={
+              <ProtectedRoute>
+                <Payment />
+              </ProtectedRoute>
+            } />
+            
+            {/* Admin routes */}
+            <Route path="/admin/*" element={
+              <ProtectedRoute adminOnly={true}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+          </Routes>
+        </CartProvider>
+      </UserProvider>
+    </Router>
+  );
+}
 
 export default App;

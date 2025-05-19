@@ -17,11 +17,42 @@ export const UserProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  // Login function
-  const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
-    return true;
+  // Login function - updated version with API call
+  const login = async (email, password) => {
+    try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://animeyoubackend.onrender.com';
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+
+      const userData = await response.json();
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+      return true;
+    } catch (error) {
+      console.error('Login error:', error);
+      return false;
+    }
+  };
+
+  const continueAsGuest = () => {
+    const guestData = {
+      isGuest: true,
+      role: 'guest',
+      name: 'Guest'
+    };
+    setUser(guestData);
+    // We can choose to store or not store guest in localStorage
+    // For this implementation, we'll store it so the guest status persists
+    localStorage.setItem('user', JSON.stringify(guestData));
   };
 
   // Logout function
@@ -37,8 +68,38 @@ export const UserProvider = ({ children }) => {
     localStorage.setItem('user', JSON.stringify(updatedUser));
   };
 
+  // Check if user has specific role
+  const hasRole = (role) => {
+    if (!user) return false;
+    if (Array.isArray(role)) {
+      return role.includes(user.role);
+    }
+    return user.role === role;
+  };
+
+  // Check if user is admin
+  const isAdmin = () => hasRole('admin');
+  
+  // Check if user is a regular user
+  const isUser = () => hasRole('user');
+  
+  // Check if user is a guest
+  const isGuest = () => hasRole('guest') || !user;
+
   return (
-    <UserContext.Provider value={{ user, login, logout, updateUser, setUser, loading }}>
+    <UserContext.Provider value={{ 
+      user, 
+      login, 
+      logout, 
+      updateUser, 
+      setUser, 
+      loading,
+      continueAsGuest,
+      hasRole,
+      isAdmin,
+      isUser,
+      isGuest
+    }}>
       {children}
     </UserContext.Provider>
   );

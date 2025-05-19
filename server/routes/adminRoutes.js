@@ -5,7 +5,10 @@ const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('cloudinary').v2;
 const Product = require('../models/Product');
-
+const User = require('../models/User');
+const Order = require('../models/Order');
+// Add the middleware at the router level
+const { protect, admin } = require('../middleware/authMiddleware');
 
 // Configure Cloudinary
 cloudinary.config({
@@ -21,11 +24,13 @@ const storage = new CloudinaryStorage({
     folder: 'anime-you-products',
     allowed_formats: ['jpg', 'jpeg', 'png', 'gif'],
     transformation: [{ width: 500, height: 500, crop: 'limit' }]
-
   }
 });
 
 const upload = multer({ storage: storage });
+
+// Apply middleware to specific routes or use it in the router
+router.use(protect); // All routes require authentication
 
 // Get all products (unchanged)
 router.get('/products', async (req, res) => {
@@ -67,9 +72,7 @@ router.post('/products', upload.single('image'), async (req, res) => {
       price,
       category,
       subcategory,
-
       image: req.file.path, // Cloudinary URL is stored here
-
       countInStock
     });
     
@@ -95,10 +98,8 @@ router.put('/products/:id', upload.single('image'), async (req, res) => {
 
     // Handle image updates
     if (req.file) {
-
       // If a new file was uploaded to Cloudinary
       updateData.image = req.file.path;
-
     } else if (req.body.imageUrl) {
       // If keeping the existing image
       updateData.image = req.body.imageUrl;
@@ -134,6 +135,49 @@ router.delete('/products/:id', async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+});
+
+// server/routes/adminRoutes.js - Add user management routes
+// Only admins can get all users
+router.get('/users', admin, async (req, res) => {
+  try {
+    const users = await User.find().select('-password');
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+router.post('/users', async (req, res) => {
+  try {
+    const { firstName, lastName, email, role } = req.body;
+    const newUser = new User({
+      firstName,
+      lastName,
+      email,
+      role: role || 'user'
+    });
+    const savedUser = await newUser.save();
+    res.status(201).json(savedUser);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Add order management routes
+router.get('/orders', async (req, res) => {
+  try {
+    const orders = await Order.find().populate('user', 'firstName lastName email');
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Stats route now uses admin middleware instead of manager
+router.get('/stats', admin, async (req, res) => {
+  // Only admins can see stats
+  // ...your code
 });
 
 module.exports = router;

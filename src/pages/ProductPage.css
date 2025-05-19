@@ -321,4 +321,72 @@
   .confirmation-button:hover {
     background-color: #2980b9;
   }
+
+  .guest-message {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  padding: 15px;
+  margin: 15px 0;
+  text-align: center;
+}
+
+.sign-in-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #6a11cb;
+  background-image: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+  color: white;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  margin-top: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.sign-in-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.sign-in-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.out-of-stock-btn {
+  background-color: #cccccc;
+  color: #666666;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: not-allowed;
+  font-weight: bold;
+  transition: opacity 0.3s;
+}
+
+.out-of-stock-btn:hover {
+  opacity: 0.8;
+}
+
+.guest-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.guest-message p {
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  color: #555;
+}
+
   

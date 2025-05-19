@@ -128,21 +128,23 @@ input {
 
 /* Create account link styling */
 .create-account {
-  width: 100%;
-  max-width: 400px;
-  margin: 20px auto 0 auto;
-  text-align: center;
-  font-size: 14px;
+  display: flex;
+    justify-content: center;
+    gap: 20px; /* This adds space between the links */
+    margin-top: 15px; /* Space above the links */
 }
 
 /* Auth link styling */
 .auth-link {
-  all: unset;
-  cursor: pointer;
-  font-size: 14px;
-  text-decoration: underline;
-  display: inline-block;
-  transition: color 0.2s ease;
+    color: #3a7fd5; /* Use your brand color */
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.auth-link:hover {
+    color: #2c63a8;
+    text-decoration: underline;
 }
 
 /* Forgot password link hover effect */
@@ -220,3 +222,5 @@ input {
   color: red;
   font-size: 0.8em;
 }
+
+

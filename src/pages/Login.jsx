@@ -5,28 +5,47 @@ import './Login.css';
 
 const Login = () => {
     const navigate = useNavigate();
-    const { login } = useUser();
+    // Call useUser at the top level of your component
+    const { login, continueAsGuest } = useUser(); // Get continueAsGuest from useUser hook
     const [error, setError] = useState('');
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const email = event.target.email.value;
-        const password = event.target.password.value;
-        if (email && password) {
-            // Create a user object with the data you want to store
-            const userData = {
-                email,
-                name: email.split('@')[0], // Example: extract name from email
-                isLoggedIn: true,
-                lastLogin: new Date().toISOString()
-            };
+    const handleSubmit = async (event) => {
+    event.preventDefault();
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+    
+    if (email && password) {
+        try {
+            // Connect to your backend to authenticate
+            const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://animeyoubackend.onrender.com';
+            const response = await fetch(`${API_URL}/api/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password })
+            });
             
+            if (!response.ok) {
+                throw new Error('Login failed');
+            }
+            
+            // Get the full user data including role from your server
+            const userData = await response.json();
             login(userData);
-            navigate('/home-page');
-        } else {
-            setError('Please enter both email and password');
+            
+            // Redirect admin users to admin dashboard, others to home page
+            if (userData.role === 'admin') {
+                navigate('/admin');
+            } else {
+                navigate('/home-page');
+            }
+        } catch (error) {
+            setError('Invalid email or password. Please try again.');
+            console.error('Login error:', error);
         }
-    };
+    }
+};
 
     return (
         <div className="login-container">
@@ -50,11 +69,29 @@ const Login = () => {
                                 Forgot Password?
                             </Link>
                         </div>
-                        <button type="submit" className="sign-in">SIGN IN</button>
+                        
+                        {/* Replace the existing sign-in button with these login options */}
+                        <div className="login-options">
+                            <button type="submit" className="sign-in">Sign In</button>
+                            
+                        </div>
+                        
                         <div className="create-account">
                             <Link to="/create-account" className="auth-link create-account-btn">
                                 Create Account
                             </Link>
+                            <a 
+                             href="#" 
+                            className="auth-link" 
+                            onClick={(e) => {
+                                 e.preventDefault();
+                                  continueAsGuest();
+                                  navigate('/home-page');
+                            }}
+                      >
+                             Continue as Guest
+                    </a>
+                            
                         </div>
                     </form>
                 </div>

@@ -56,13 +56,15 @@ const CreateAccount = () => {
     }
 
     // Create a user object with the registration data
+    // In the handleSubmit function
     const userData = {
       firstName: formData.firstName,
       lastName: formData.lastName,
       email: formData.email,
       phoneNumber: formData.phoneNumber,
       isLoggedIn: true,
-      registrationDate: new Date().toISOString()
+      registrationDate: new Date().toISOString(),
+      role: 'user' // Default role for new accounts
     };
 
     // Store user data and log them in

@@ -1,5 +1,9 @@
 // AdminDashboard.jsx
 import React, { useState, useEffect } from 'react';
+import { Link, Route, Routes, useNavigate } from 'react-router-dom';
+import { useUser } from '../contexts/UserContext';
+import UserManagement from './admin/UserManagement';
+import OrderManagement from './admin/OrderManagement';
 import './AdminDashboard.css';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://animeyoubackend.onrender.com';
@@ -20,7 +24,7 @@ const SUBCATEGORIES = {
   'Varieties': ['Manga', 'Anime DVDs and Blurays', 'Art Books', 'Light Novels', 'Videogames']
 };
 
-const AdminDashboard = () => {
+const ProductManagement = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentProduct, setCurrentProduct] = useState(null);
@@ -43,7 +47,6 @@ const AdminDashboard = () => {
 
   const fetchProducts = async () => {
     try {
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://animeyoubackend.onrender.com';
       const response = await fetch(`${API_URL}/api/admin/products`);
       if (!response.ok) throw new Error('Failed to fetch products');
       
@@ -203,186 +206,222 @@ const AdminDashboard = () => {
   if (loading) return <div className="loading">Loading...</div>;
 
   return (
-    <div className="admin-dashboard">
-      <h1>Admin Dashboard</h1>
-      
-      <div className="admin-container">
-        <div className="product-form-container">
-          <h2>{isEditing ? 'Edit Product' : 'Add New Product'}</h2>
-          <form onSubmit={handleSubmit} className="product-form">
-            <div className="form-group">
-              <label htmlFor="name">Product Name</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="description">Description</label>
-              <textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="price">Price</label>
-              <input
-                type="number"
-                id="price"
-                name="price"
-                step="0.01"
-                value={formData.price}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="category">Category</label>
-              <select
-                id="category"
-                name="category"
-                value={formData.category}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="" disabled>Select a category</option>
-                {CATEGORIES.map(category => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="subcategory">Subcategory</label>
-              <select
-                id="subcategory"
-                name="subcategory"
-                value={formData.subcategory || ''}
-                onChange={handleInputChange}
-                required
-                disabled={!formData.category}
-              >
-                <option value="" disabled>Select a subcategory</option>
-                {formData.category && SUBCATEGORIES[formData.category] ? 
-                  SUBCATEGORIES[formData.category].map(subcategory => (
-                    <option key={subcategory} value={subcategory}>
-                      {subcategory}
-                    </option>
-                  )) : null
-                }
-              </select>
-            </div>
-
-
-            <div className="form-group">
-              <label htmlFor="image">Product Image</label>
-              <input
-                type="file"
-                id="image"
-                name="image"
-                accept="image/*"
-                onChange={handleInputChange}
-                required={!isEditing}
-              />
-              {imagePreview && (
-                <div className="image-preview">
-                  <img src={imagePreview} alt="Preview" />
-                </div>
-              )}
-            </div>
-
-            
-            <div className="form-group">
-              <label htmlFor="countInStock">Count In Stock</label>
-              <input
-                type="number"
-                id="countInStock"
-                name="countInStock"
-                value={formData.countInStock}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            
-            <div className="form-buttons">
-              <button type="submit" className="btn-submit">
-                {isEditing ? 'Update Product' : 'Add Product'}
-              </button>
-              {isEditing && (
-                <button type="button" className="btn-cancel" onClick={resetForm}>
-                  Cancel
-                </button>
-              )}
-            </div>
-          </form>
-        </div>
-        
-        <div className="products-list-container">
-          <h2>Product List</h2>
-          <div className="products-list">
-            <table key={tableKey}>
-              <thead>
-                <tr>
-                  <th>Image</th>
-                  <th>Name</th>
-                  <th>Category</th>
-                  <th>Subcategory</th>
-                  <th>Price</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products && products.length > 0 ? (
-                  products.map(product => (
-                    <tr key={product._id}>
-                      <td>
-                        <img 
-                          src={product.image} 
-                          alt={product.name} 
-                          className="product-thumbnail" 
-                        />
-                      </td>
-                      <td>{product.name}</td>
-                      <td>{product.category}</td>
-                      <td>{product.subcategory}</td>
-                      <td>₱{product.price.toFixed(2)}</td>
-                      <td className="actions">
-                        <button 
-                          className="btn-edit" 
-                          onClick={() => handleEdit(product)}
-                        >
-                          Edit
-                        </button>
-                        <button 
-                          className="btn-delete" 
-                          onClick={() => handleDelete(product._id)}
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6" className="no-products">No products found</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+    <div className="admin-container">
+      <div className="product-form-container">
+        <h2>{isEditing ? 'Edit Product' : 'Add New Product'}</h2>
+        <form onSubmit={handleSubmit} className="product-form">
+          <div className="form-group">
+            <label htmlFor="name">Product Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              required
+            />
           </div>
+          
+          <div className="form-group">
+            <label htmlFor="description">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="price">Price</label>
+            <input
+              type="number"
+              id="price"
+              name="price"
+              step="0.01"
+              value={formData.price}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="category">Category</label>
+            <select
+              id="category"
+              name="category"
+              value={formData.category}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="" disabled>Select a category</option>
+              {CATEGORIES.map(category => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="subcategory">Subcategory</label>
+            <select
+              id="subcategory"
+              name="subcategory"
+              value={formData.subcategory || ''}
+              onChange={handleInputChange}
+              required
+              disabled={!formData.category}
+            >
+              <option value="" disabled>Select a subcategory</option>
+              {formData.category && SUBCATEGORIES[formData.category] ? 
+                SUBCATEGORIES[formData.category].map(subcategory => (
+                  <option key={subcategory} value={subcategory}>
+                    {subcategory}
+                  </option>
+                )) : null
+              }
+            </select>
+          </div>
+
+
+          <div className="form-group">
+            <label htmlFor="image">Product Image</label>
+            <input
+              type="file"
+              id="image"
+              name="image"
+              accept="image/*"
+              onChange={handleInputChange}
+              required={!isEditing}
+            />
+            {imagePreview && (
+              <div className="image-preview">
+                <img src={imagePreview} alt="Preview" />
+              </div>
+            )}
+          </div>
+
+          
+          <div className="form-group">
+            <label htmlFor="countInStock">Count In Stock</label>
+            <input
+              type="number"
+              id="countInStock"
+              name="countInStock"
+              value={formData.countInStock}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+          
+          <div className="form-buttons">
+            <button type="submit" className="btn-submit">
+              {isEditing ? 'Update Product' : 'Add Product'}
+            </button>
+            {isEditing && (
+              <button type="button" className="btn-cancel" onClick={resetForm}>
+                Cancel
+              </button>
+            )}
+          </div>
+        </form>
+      </div>
+      
+      <div className="products-list-container">
+        <h2>Product List</h2>
+        <div className="products-list">
+          <table key={tableKey}>
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Subcategory</th>
+                <th>Price</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products && products.length > 0 ? (
+                products.map(product => (
+                  <tr key={product._id}>
+                    <td>
+                      <img 
+                        src={product.image} 
+                        alt={product.name} 
+                        className="product-thumbnail" 
+                      />
+                    </td>
+                    <td>{product.name}</td>
+                    <td>{product.category}</td>
+                    <td>{product.subcategory}</td>
+                    <td>₱{product.price.toFixed(2)}</td>
+                    <td className="actions">
+                      <button 
+                        className="btn-edit" 
+                        onClick={() => handleEdit(product)}
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        className="btn-delete" 
+                        onClick={() => handleDelete(product._id)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="no-products">No products found</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
+      </div>
+    </div>
+  );
+};
+
+const AdminDashboard = () => {
+  const { isAdmin, user } = useUser();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    // Redirect non-admin users
+    if (!isAdmin()) {
+      navigate('/home-page');
+    }
+  }, [isAdmin, navigate]);
+
+  if (!isAdmin()) {
+    return <div>Access Denied</div>;
+  }
+
+  return (
+    <div className="admin-dashboard">
+      <div className="admin-sidebar">
+        <h2>Admin Dashboard</h2>
+        <nav>
+          <ul>
+            <li><Link to="/admin/products">Products</Link></li>
+            <li><Link to="/admin/users">Users</Link></li>
+            <li><Link to="/admin/orders">Orders</Link></li>
+          </ul>
+        </nav>
+      </div>
+
+      <div className="admin-content">
+        <Routes>
+          <Route path="/products" element={<ProductManagement />} />
+          <Route path="/users" element={<UserManagement />} />
+          <Route path="/orders" element={<OrderManagement />} />
+          <Route path="/" element={<div>Welcome to Admin Dashboard</div>} />
+        </Routes>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import './categories.css';
 import { useCart } from '../contexts/CartContext';
+import { useUser } from '../contexts/UserContext';
 
 // Helper function to normalize image paths
 const normalizeImagePath = (path) => {
@@ -18,6 +19,7 @@ const ProductPage = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { isGuest } = useUser();
   
   useEffect(() => {
     const fetchProduct = async () => {
@@ -187,29 +189,48 @@ const ProductPage = () => {
             </div>
             
             <div className="product-actions">
-            <button 
-              className="add-to-cart-btn" 
-              onClick={handleAddToCart}
-            >
-              {/* Optional cart icon */}
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                <circle cx="9" cy="21" r="1" />
-                <circle cx="20" cy="21" r="1" />
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-              </svg>
-              Add to Cart
-            </button>
-              {showConfirmation && (
-                <div className="disclaimer-overlay">
-                  <div className="disclaimer-box">
-                    <img src="/assets/logo.png" alt="Logo" className="disclaimer-logo" />
-                    <h6 className="disclaimer-header">Success!</h6>
-                    <p className="disclaimer-text">{product.name} has been added to your cart.</p>
-                    <button className="disclaimer-button" onClick={() => setShowConfirmation(false)}>Continue Shopping</button>
-                  </div>
-                </div>
-              )}
-            </div>
+  {isGuest ? (
+    <div className="guest-message">
+  <p>Please sign in to add items to your cart</p>
+  <Link to="/" className="sign-in-button">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24" style={{ marginRight: '8px' }}>
+      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+      <polyline points="10 17 15 12 10 7" />
+      <line x1="15" y1="12" x2="3" y2="12" />
+    </svg>
+    Sign In
+  </Link>
+</div>
+  ) : (
+    product.inStock ? (
+      <button 
+        className="add-to-cart-btn" 
+        onClick={handleAddToCart}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+          <circle cx="9" cy="21" r="1" />
+          <circle cx="20" cy="21" r="1" />
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+        </svg>
+        Add to Cart
+      </button>
+    ) : (
+      <button className="out-of-stock-btn" disabled>
+        Out of Stock
+      </button>
+    )
+  )}
+  {showConfirmation && (
+    <div className="disclaimer-overlay">
+      <div className="disclaimer-box">
+        <img src="/assets/logo.png" alt="Logo" className="disclaimer-logo" />
+        <h6 className="disclaimer-header">Success!</h6>
+        <p className="disclaimer-text">{product.name} has been added to your cart.</p>
+        <button className="disclaimer-button" onClick={() => setShowConfirmation(false)}>Continue Shopping</button>
+      </div>
+    </div>
+  )}
+</div>
           </div>
         </div>
         

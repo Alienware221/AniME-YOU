@@ -3,19 +3,21 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useUser } from '../contexts/UserContext';
 
-const ProtectedRoute = ({ children }) => {
-  const { user, loading } = useUser();
-  
+const ProtectedRoute = ({ children, adminOnly = false }) => {
+  const { user, isAdmin, loading } = useUser();
+
   if (loading) {
-    // You can replace this with a loading spinner
     return <div>Loading...</div>;
   }
-  
-  if (!user) {
-    return <Navigate to="/" replace />;
+
+  // For admin-only routes
+  if (adminOnly) {
+    return isAdmin() ? children : <Navigate to="/home-page" />;
   }
-  
-  return children;
+
+  // For regular protected routes (any logged-in user)
+  return user && !user.isGuest ? children : <Navigate to="/" />;
 };
 
 export default ProtectedRoute;
+
