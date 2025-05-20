@@ -11,45 +11,55 @@ const Homepage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-  const fetchProducts = async () => {
-    try {
-      console.log('Starting to fetch products...');
-      const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://animeyoubackend.onrender.com';
-      const response = await fetch(`${API_URL}/api/admin/products`);
-      console.log('Response status:', response.status);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch products');
-      }
-      
-      const products = await response.json();
-      console.log('Products from API:', products); // Check what data is being received
-      console.log('Number of products received:', products.length);
-      
-      // Organize products by category
-      const categorizedProducts = products.reduce((acc, product) => {
-        const category = product.category;
-        if (!acc[category]) {
-          acc[category] = [];
+    const fetchProducts = async () => {
+      try {
+        console.log('Starting to fetch products...');
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://animeyoubackend.onrender.com';
+        
+        // Get user and token from localStorage
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = user ? user.token : null;
+        
+        // Include the token in your request headers
+        const response = await fetch(`${API_URL}/api/admin/products`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        console.log('Response status:', response.status);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
         }
-        acc[category].push(product);
-        return acc;
-      }, {});
-      
-      console.log('Categorized products:', categorizedProducts); // Check the structure
-      console.log('Categories found:', Object.keys(categorizedProducts));
-      
-      setProductData(categorizedProducts);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      setLoading(false);
-    }
-  };
-  
-  fetchProducts();
-}, []);
-
+        
+        const products = await response.json();
+        console.log('Products from API:', products);
+        console.log('Number of products received:', products.length);
+        
+        // Organize products by category
+        const categorizedProducts = products.reduce((acc, product) => {
+          const category = product.category;
+          if (!acc[category]) {
+            acc[category] = [];
+          }
+          acc[category].push(product);
+          return acc;
+        }, {});
+        
+        console.log('Categorized products:', categorizedProducts);
+        console.log('Categories found:', Object.keys(categorizedProducts));
+        
+        setProductData(categorizedProducts);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setLoading(false);
+      }
+    };
+    
+    fetchProducts();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -247,8 +257,6 @@ const Homepage = () => {
 
         <p className="footer-bottom">&copy; 2025 Anime&You. All rights reserved.</p>
       </footer>
-
-
     </div>
   );
 };

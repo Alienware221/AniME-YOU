@@ -44,7 +44,18 @@ const SubcategoryPage = () => {
             try {
                 console.log('Starting to fetch products...');
                 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://animeyoubackend.onrender.com';
-                const response = await fetch(`${API_URL}/api/admin/products`);
+                
+                // Get user and token from localStorage
+                const user = JSON.parse(localStorage.getItem('user'));
+                const token = user ? user.token : null;
+                
+                // Include the token in your request headers
+                const response = await fetch(`${API_URL}/api/admin/products`, {
+                  headers: {
+                    'Authorization': `Bearer ${token}`
+                  }
+                });
+                
                 console.log('Response status:', response.status);
                 
                 if (!response.ok) {

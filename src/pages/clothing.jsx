@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'; // Import hooks from React
 import { useNavigate, Link } from 'react-router-dom';
 import './categories.css';
 
-    const Clothing = () => {
+const Clothing = () => {
     const navigate = useNavigate();
     const [clothingData, setClothingData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -12,9 +12,19 @@ import './categories.css';
         const loadProducts = async () => {
             try {
                 setLoading(true);
-                // Use the direct fetch approach that works in your homepage
+                // Use the direct fetch approach
                 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://animeyoubackend.onrender.com';
-                const response = await fetch(`${API_URL}/api/admin/products`);
+                
+                // Get user and token from localStorage
+                const user = JSON.parse(localStorage.getItem('user'));
+                const token = user ? user.token : null;
+                
+                // Include the token in your request headers
+                const response = await fetch(`${API_URL}/api/admin/products`, {
+                  headers: {
+                    'Authorization': `Bearer ${token}`
+                  }
+                });
                 
                 if (!response.ok) {
                     throw new Error('Failed to fetch products');

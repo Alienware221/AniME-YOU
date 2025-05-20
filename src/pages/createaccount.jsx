@@ -16,7 +16,7 @@ const CreateAccount = () => {
   });
 
   const [errors, setErrors] = useState({});
-
+  const [isLoading, setIsLoading] = useState(false);
 
   const validateForm = () => {
     const newErrors = {};
@@ -47,31 +47,68 @@ const CreateAccount = () => {
     setFormData(prevState => ({ ...prevState, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-
-    // Create a user object with the registration data
-    // In the handleSubmit function
-    const userData = {
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      email: formData.email,
-      phoneNumber: formData.phoneNumber,
-      isLoggedIn: true,
-      registrationDate: new Date().toISOString(),
-      role: 'user' // Default role for new accounts
-    };
-
-    // Store user data and log them in
-    login(userData);
-
-    // Navigate to homepage
-    navigate('/home-page');
+    
+    setIsLoading(true);
+    
+    try {
+      // Create a user object with the registration data
+      const userData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password, // This will be hashed on the server
+        phoneNumber: formData.phoneNumber,
+        registrationDate: new Date().toISOString(),
+        role: 'user' // Default role for new accounts
+      };
+      
+      // Send registration data to backend
+      const response = await fetch('https://animeyoubackend.onrender.com/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to create account');
+      }
+      
+      // If registration is successful, create a user object for the frontend
+      const frontendUserData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        isLoggedIn: true,
+        registrationDate: new Date().toISOString(),
+        role: 'user',
+        ...(data.user || {}) // Include any additional user data from the response
+      };
+      
+      // Store user data and log them in
+      login(frontendUserData);
+      
+      // Navigate to homepage
+      navigate('/home-page');
+    } catch (error) {
+      console.error('Registration error:', error);
+      setErrors({ 
+        submit: error.message || 'Failed to create account. Please try again later.'
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const renderInput = (name, type, placeholder) => (
@@ -93,6 +130,7 @@ const CreateAccount = () => {
       <div className="login-box">
         <div className="login-left">
           <h2>CREATE ACCOUNT</h2>
+          {errors.submit && <div className="error-message">{errors.submit}</div>}
           <form onSubmit={handleSubmit}>
             {renderInput('firstName', 'text', 'First Name')}
             {renderInput('lastName', 'text', 'Last Name')}
@@ -100,7 +138,9 @@ const CreateAccount = () => {
             {renderInput('password', 'password', 'Password')}
             {renderInput('confirmPassword', 'password', 'Confirm Password')}
             {renderInput('phoneNumber', 'tel', 'Phone Number')}
-            <button type="submit" className="sign-in">REGISTER</button>
+            <button type="submit" className="sign-in" disabled={isLoading}>
+              {isLoading ? 'CREATING ACCOUNT...' : 'REGISTER'}
+            </button>
           </form>
           <div className="back-to-login">
             <Link to="/" className="auth-link">Back to Login</Link>

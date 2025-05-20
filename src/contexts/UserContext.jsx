@@ -1,7 +1,6 @@
 // src/contexts/UserContext.jsx
 import React, { createContext, useState, useEffect, useContext } from 'react';
 
-// Add export here to make the context available outside this file
 export const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
@@ -17,8 +16,17 @@ export const UserProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  // Login function - updated version with API call
-  const login = async (email, password) => {
+  // Updated login function that handles both cases
+  const login = async (emailOrUserData, password) => {
+    // Case 1: If a user object is passed directly (e.g., for admin bypass)
+    if (typeof emailOrUserData === 'object' && emailOrUserData !== null) {
+      const userData = emailOrUserData;
+      setUser(userData);
+      localStorage.setItem('user', JSON.stringify(userData));
+      return true;
+    }
+    
+    // Case 2: If email and password are provided, authenticate with the server
     try {
       const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://animeyoubackend.onrender.com';
       const response = await fetch(`${API_URL}/api/auth/login`, {
@@ -26,7 +34,10 @@ export const UserProvider = ({ children }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ 
+          email: emailOrUserData, 
+          password 
+        }),
       });
 
       if (!response.ok) {
@@ -50,8 +61,6 @@ export const UserProvider = ({ children }) => {
       name: 'Guest'
     };
     setUser(guestData);
-    // We can choose to store or not store guest in localStorage
-    // For this implementation, we'll store it so the guest status persists
     localStorage.setItem('user', JSON.stringify(guestData));
   };
 
@@ -98,7 +107,7 @@ export const UserProvider = ({ children }) => {
       hasRole,
       isAdmin,
       isUser,
-      isGuest
+      isGuest: isGuest() // Call the function here to return a boolean instead of the function reference
     }}>
       {children}
     </UserContext.Provider>
