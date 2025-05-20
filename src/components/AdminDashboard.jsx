@@ -24,10 +24,45 @@ const SUBCATEGORIES = {
   'Varieties': ['Manga', 'Anime DVDs and Blurays', 'Art Books', 'Light Novels', 'Videogames']
 };
 
+const convertToUrlFormat = (subcategoryName) => {
+  // Handle special cases first
+  const specialCases = {
+    'Mousepads': 'mousepad',
+    'Desk Organizers': 'deskorganizers',
+    'Wall Art': 'wallart',
+    'Desk Lamps': 'desklamps',
+    'Coasters': 'coasters',
+    'T-Shirts': 't-shirts',
+    'Scaled Figures': 'figures',
+    'Nendoroids': 'nendoroids',
+    'Acrylic Stands': 'acrylic',
+    'Mini Figurines': 'mini',
+    'Gachapons': 'gacha',
+    'Animal Plushies': 'animal',
+    'Character Plushies': 'character',
+    'Keychain Plushies': 'keychain',
+    'Pillow Plushies': 'pillow',
+    'Blanket Plushies': 'blanket',
+    'Manga': 'manga',
+    'Anime DVDs and Blurays': 'dvd',
+    'Art Books': 'books',
+    'Light Novels': 'novels',
+    'Videogames': 'games'
+  };
+  
+  if (specialCases[subcategoryName]) {
+    return specialCases[subcategoryName];
+  }
+  
+  // Default conversion: lowercase and remove spaces
+  return subcategoryName.toLowerCase().replace(/\s+/g, '');
+};
+
 const ProductManagement = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentProduct, setCurrentProduct] = useState(null);
+  const { user } = useUser(); // Get user with token
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -47,7 +82,11 @@ const ProductManagement = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch(`${API_URL}/api/admin/products`);
+      const response = await fetch(`${API_URL}/api/admin/products`, {
+        headers: {
+          'Authorization': `Bearer ${user.token}` // Add token
+        }
+      });
       if (!response.ok) throw new Error('Failed to fetch products');
       
       const data = await response.json();
@@ -110,7 +149,7 @@ const ProductManagement = () => {
       productData.append('description', formData.description);
       productData.append('price', formData.price);
       productData.append('category', formData.category.toLowerCase());
-      productData.append('subcategory', formData.subcategory.toLowerCase());
+      productData.append('subcategory', convertToUrlFormat(formData.subcategory));
       productData.append('countInStock', formData.countInStock);
       
       // Only append image if it's a new file (not a URL string)
@@ -126,7 +165,7 @@ const ProductManagement = () => {
         description: formData.description,
         price: formData.price,
         category: formData.category.toLowerCase(),
-        subcategory: formData.subcategory.toLowerCase(),
+        subcategory: convertToUrlFormat(formData.subcategory),
         countInStock: formData.countInStock,
         imageType: typeof formData.image,
         isFile: formData.image instanceof File,
@@ -136,6 +175,9 @@ const ProductManagement = () => {
       
       const response = await fetch(url, {
         method,
+        headers: {
+          'Authorization': `Bearer ${user.token}` // Add token
+        },
         body: productData
       });
 
@@ -177,7 +219,10 @@ const ProductManagement = () => {
     
     try {
       const response = await fetch(`${API_URL}/api/admin/products/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${user.token}` // Add token
+        }
       });
 
       if (!response.ok) throw new Error('Failed to delete product');

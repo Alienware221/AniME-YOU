@@ -7,7 +7,11 @@ import { useUser } from '../contexts/UserContext';
 // Helper function to normalize image paths
 const normalizeImagePath = (path) => {
   if (!path) return '';
-  // Ensure path starts with a slash
+  // Check if the path is already a full URL
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    return path;
+  }
+  // Otherwise ensure path starts with a slash
   return path.startsWith('/') ? path : `/${path}`;
 };
 
