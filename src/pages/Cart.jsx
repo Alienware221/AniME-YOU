@@ -4,48 +4,7 @@ import { FaShoppingBag } from 'react-icons/fa';
 import './Cart.css';
 import { useCart } from '../contexts/CartContext';
 
-const Navbar = () => {
-  return (
-    <nav className="navbar">
-      <div className="logo">
-          <Link to="/home-page">
-              <img src="/assets/logo.png" alt="Brand Logo" />
-          </Link>
-      </div>
-      <ul className="nav-links">
-          <li><Link to="/desktop">DESKTOP</Link></li>
-          <li><Link to="/figurines">FIGURINES</Link></li>
-          <li><Link to="/plushies">PLUSHIES</Link></li>
-          <li><Link to="/clothing">CLOTHING</Link></li>
-          <li><Link to="/varieties">VARIETIES</Link></li>
-      </ul>
-      <div className="nav-icons">
-          {/* Icons */}
-          <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <Link to="/cart">
-              <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-              <circle cx="9" cy="21" r="1" />
-              <circle cx="20" cy="21" r="1" />
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-              </svg>
-          </Link>
-            <Link to="/profile">
-              <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-            </Link>
-      </div>
-    </nav>
-  );
-};
-
 const Cart = () => {
-  // Replace your useState with the useCart hook
   const navigate = useNavigate();
   const { cart, removeFromCart, updateQuantity } = useCart();
   
@@ -88,7 +47,6 @@ const Cart = () => {
 
   return (
     <div className="container">
-        <Navbar />
         <div className="subcontainer">
             <h2 className="title">YOUR CART</h2>
 
@@ -161,7 +119,6 @@ const Cart = () => {
                         Checkout
                     </button>
                 </div>
-
               </>
             )}
         </div>

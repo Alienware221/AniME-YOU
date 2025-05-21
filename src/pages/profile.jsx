@@ -1,5 +1,5 @@
 // [profile.jsx](file:///C:\Users\inoninja\AniME-YOU-NEW\src\pages\profile.jsx)
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaShoppingCart, FaHeart, FaCog, FaCreditCard, FaMapMarkerAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom'; 
 import './profile.css';
@@ -9,43 +9,46 @@ import LogoutButton from '../components/LogoutButton';
 
 const Profile = () => {
     const { user } = useUser();
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const fetchOrders = async () => {
+            if (!user || user.isGuest) {
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const API_URL = 'https://animeyoubackend.onrender.com';
+                // Use the /api/orders/myorders endpoint instead
+                const response = await fetch(`${API_URL}/api/orders/myorders`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch orders');
+                }
+
+                const data = await response.json();
+                setOrders(data);
+            } catch (err) {
+                console.error('Error fetching orders:', err);
+                setError('Failed to load orders. Please try again later.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchOrders();
+    }, [user]);
+
 
     return (
         <div className="app">
-            <nav className="navbar">
-                <div className="logo">
-                    <Link to="/home-page">
-                        <img src="/assets/logo.png" alt="Brand Logo" />
-                    </Link>
-                </div>
-                <ul className="nav-links">
-                    <li><Link to="/desktop">DESKTOP</Link></li>
-                    <li><Link to="/figurines">FIGURINES</Link></li>
-                    <li><Link to="/plushies">PLUSHIES</Link></li>
-                    <li><Link to="/clothing">CLOTHING</Link></li>
-                    <li><Link to="/varieties">VARIETIES</Link></li>
-                </ul>
-                <div className="nav-icons">
-                    <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                        <circle cx="11" cy="11" r="8" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                    </svg>
-                    <Link to="/cart">
-                        <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                            <circle cx="9" cy="21" r="1" />
-                            <circle cx="20" cy="21" r="1" />
-                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                        </svg>
-                    </Link>
-                    <Link to="/profile">
-                        <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                            <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
-                            <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
-                            <circle cx="12" cy="7" r="4" />
-                        </svg>
-                    </Link>
-                </div>
-            </nav>
 
             <div className="profile-main">
                 <aside className="sidebar">
@@ -77,16 +80,47 @@ const Profile = () => {
                    {user && (
                     <div>
                         <p>Email: {user.email}</p>
-                        <p>Phone: {user.phoneNumber}</p>
+                        <p>Phone: {user.phone || user.phoneNumber || user.address?.telephone || 'Not provided'}</p>
                         <p>Registration Date: {user.registrationDate}</p>
                         {/* Add more user details as needed */}
                     </div>
                     )}
                     <div className="order-section">
                         <h2>Completed Orders</h2>
-                        <div className="order-grid">
-                            {/* Fetch and display order details based on the user */}
-                        </div>
+                        {loading ? (
+                            <p>Loading your orders...</p>
+                        ) : error ? (
+                            <p className="error-message">{error}</p>
+                        ) : orders.length > 0 ? (
+                            <div className="order-grid">
+                                {orders.map(order => (
+                                    <div key={order._id} className="order-card">
+                                        <div className="order-header">
+                                            <span>Order #{order._id.substring(0, 8)}</span>
+                                            <span className="order-date">{new Date(order.createdAt).toLocaleDateString()}</span>
+                                        </div>
+                                        <div className="order-items">
+                                            {order.orderItems.map((item, index) => (
+                                                <div key={index} className="order-item">
+                                                    <img src={item.image} alt={item.name} />
+                                                    <div className="item-details">
+                                                        <h4>{item.name}</h4>
+                                                        <p>Qty: {item.qty}</p>
+                                                        <p>₱{item.price.toFixed(2)}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className="order-footer">
+                                            <p className="order-status">Status: {order.status}</p>
+                                            <p className="order-total">Total: ₱{order.totalPrice.toFixed(2)}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p>You don't have any completed orders yet.</p>
+                        )}
                     </div>
                 </div>
             </div>

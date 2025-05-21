@@ -7,6 +7,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const authRoutes = require('./routes/authRoutes');
 const User = require('./models/User');
 
+
 // Load env vars
 dotenv.config();
 
@@ -39,10 +40,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static('uploads'));
 
 // Routes
+app.use('/api/orders', require('./routes/orderRoutes'));
+app.use('/api/cart', require('./routes/cartRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/admin', adminRoutes);
 app.use('/api/auth', authRoutes);
-
+app.use('/api/users', require('./routes/userRoutes')); // Add this line
 
 // Update your admin routes to use authentication middleware
 const { protect, admin } = require('./middleware/authMiddleware');

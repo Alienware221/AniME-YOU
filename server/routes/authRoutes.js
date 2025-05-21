@@ -25,9 +25,18 @@ router.post('/register', async (req, res) => {
     });
     
     // Generate token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '30d'
-    });
+    const token = jwt.sign(
+      { 
+        id: user._id,
+        isAdmin: user.role === 'admin' // Convert role to isAdmin boolean
+      }, 
+      process.env.JWT_SECRET, 
+      {
+        expiresIn: '30d'
+      }
+    );
+    
+
     
     res.status(201).json({
       _id: user._id,
@@ -60,10 +69,16 @@ router.post('/login', async (req, res) => {
     }
     
     // Generate token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '30d'
-    });
-    
+    // In login route - update to match registration route
+    const token = jwt.sign(
+      { 
+        id: user._id,
+        isAdmin: user.role === 'admin'
+      }, 
+      process.env.JWT_SECRET, 
+      { expiresIn: '30d' }
+    );
+
     res.json({
       _id: user._id,
       firstName: user.firstName,

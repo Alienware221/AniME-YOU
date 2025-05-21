@@ -1,57 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { FaShoppingCart, FaHeart, FaCog, FaCreditCard, FaMapMarkerAlt, FaPencilAlt } from 'react-icons/fa';
 import { MdKeyboardArrowRight } from 'react-icons/md';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './checkOut.css';
-
-const Navbar = () => {
-  return (
-    <nav className="navbar">
-      <div className="logo">
-          <Link to="/home-page">
-              <img src="/assets/logo.png" alt="Brand Logo" />
-          </Link>
-      </div>
-      <ul className="nav-links">
-          <li><Link to="/desktop">DESKTOP</Link></li>
-          <li><Link to="/figurines">FIGURINES</Link></li>
-          <li><Link to="/plushies">PLUSHIES</Link></li>
-          <li><Link to="/clothing">CLOTHING</Link></li>
-          <li><Link to="/varieties">VARIETIES</Link></li>
-      </ul>
-      <div className="nav-icons">
-          {/* Icons */}
-          <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <Link to="/cart">
-              <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-              <circle cx="9" cy="21" r="1" />
-              <circle cx="20" cy="21" r="1" />
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-              </svg>
-          </Link>
-            <Link to="/profile">
-              <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-            </Link>
-      </div>
-    </nav>
-  );
-};
+import { useCart } from '../contexts/CartContext';
 
 const Checkout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const { clearCart } = useCart();
   
   useEffect(() => {
     // Get cart items from location state (passed when navigating from Cart.jsx)
     if (location.state && location.state.cartItems) {
       setCartItems(location.state.cartItems);
+    } else {
+      // Fallback to localStorage if items not passed via location
+      const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
+      setCartItems(storedCart);
+    }
+    
+    // Get user data from localStorage
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (storedUser) {
+      setUser(storedUser);
     }
   }, [location]);
 
@@ -67,9 +44,97 @@ const Checkout = () => {
   const shippingSubTotal = shipping;
   const totalPayment = merchandiseSubTotal + shippingSubTotal;
 
+  const handleCheckout = async () => {
+    if (!user || !user.token) {
+      alert('Please log in to complete your purchase.');
+      navigate('/login');
+      return;
+    }
+
+    if (!user.address || !user.address.addressLine1) {
+      alert('Please add your shipping address before checking out.');
+      navigate('/address');
+      return;
+    }
+
+    if (cartItems.length === 0) {
+      alert('Your cart is empty. Please add items before checking out.');
+      navigate('/products');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Structure the order data to match your backend schema requirements
+      const orderData = {
+        userId: user._id || user.id, // Explicitly include userId as required by backend
+        products: cartItems.map(item => ({
+          productId: item.id,
+          name: item.name,
+          quantity: item.quantity,
+          image: item.image,
+          price: item.price
+        })),
+        shippingAddress: {
+          street: user.address.addressLine1 || '',
+          city: user.address.city || '',
+          state: user.address.state || user.address.province || '', // Changed from province to state
+          postalCode: user.address.zip || user.address.postalCode || ''
+        },
+        paymentMethod: 'cash on delivery',
+        totalAmount: totalPayment,
+        status: 'pending'
+      };
+
+      console.log("Order data being sent:", JSON.stringify(orderData, null, 2));
+
+      // Make API request with authorization header
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${user.token}`
+        }
+      };
+
+      const response = await axios.post('https://animeyoubackend.onrender.com/api/orders', orderData, config);
+
+      if (response.data) {
+        // Clear cart from localStorage
+        localStorage.removeItem('cart');
+        
+        // Also clear cart state in context
+        clearCart();
+        
+        // Navigate to success page
+        navigate('/order-success', { 
+          state: { 
+            orderId: response.data._id,
+            orderTotal: totalPayment
+          } 
+        });
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      
+      // More detailed error information for debugging
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        console.error('Error response status:', error.response.status);
+      }
+      
+      setError(
+        error.response?.data?.message || 
+        'Failed to process your order. Please try again.'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="container">
-      <Navbar />
       <div className="subcontainer">
         <h2 className="title">CHECKOUT</h2>
 
@@ -117,11 +182,27 @@ const Checkout = () => {
           <div className="personalDetails">
             <h3>Personal Details</h3>
             <div className="subpersonalDetails">
-              <p> {/*Removed inline styles, this will use default p tag styling from browser or any global CSS you may have, consider setting styles in checkOut.css if needed*/}
-                John Cena, 09123456789, 123 Main Street, Quezon City, Metro Manila. {/* Replace with actual data fetching logic */}
+              <p>
+                {user ? 
+                  <>
+                    <strong>Name:</strong> {user.firstName} {user.lastName}<br/>
+                    <strong>Phone:</strong> {user.phone || user.address?.telephone || 'No phone'}<br/>
+                    <strong>Address:</strong> {
+                      user.address 
+                        ? `${user.address.addressLine1}, ${user.address.city}, ${user.address.state || user.address.province}` 
+                        : 'No address provided'
+                    }<br/>
+                    <strong>Registered:</strong> {
+                      user.createdAt 
+                        ? new Date(user.createdAt).toLocaleDateString() 
+                        : 'Not available'
+                    }
+                  </> 
+                  : 'Please log in to complete your purchase.'
+                }
               </p>
-              <div className="arrowWrapper"> {/* Use Link component for navigation instead of button */}
-                <Link to="/address" className="arrowButton"> {/* Link to your Address component */}
+              <div className="arrowWrapper">
+                <Link to="/address" className="arrowButton">
                   <MdKeyboardArrowRight size={24} />
                 </Link>
               </div>
@@ -148,8 +229,16 @@ const Checkout = () => {
               <strong>₱{totalPayment.toFixed(2)}</strong>
             </div>
 
+            {error && <div className="error-message">{error}</div>}
+
             <div className="footer">
-              <button className="checkout">Checkout</button> {/* Add onClick handler here */}
+              <button 
+                onClick={handleCheckout} 
+                className="checkout" 
+                disabled={loading}
+              >
+                {loading ? 'Processing...' : 'Checkout'}
+              </button>
             </div>
           </div>
         </div>
@@ -157,6 +246,5 @@ const Checkout = () => {
     </div>
   );
 };
-
 
 export default Checkout;
