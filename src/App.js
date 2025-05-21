@@ -25,18 +25,22 @@ import { CartProvider } from './contexts/CartContext';
 import AdminDashboard from './components/AdminDashboard';
 import UserManagement from './components/admin/UserManagement';
 import OrderManagement from './components/admin/OrderManagement';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import './styles/Responsive.css';
 import './App.css';
 function App() {
   return (
     <Router>
       <UserProvider>
         <CartProvider>
+          <Navbar /> 
           <Routes>
             {/* Public routes */}
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<Homepage />} />
             <Route path="/create-account" element={<CreateAccount />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/home-page" element={<Homepage />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/about-faqs" element={<AboutFAQs />} />
             <Route path="/product/:productId" element={<ProductPage />} />
             <Route path="/desktop" element={<Desktop />} />
@@ -90,6 +94,7 @@ function App() {
               </ProtectedRoute>
             } />
           </Routes>
+          <Footer />
         </CartProvider>
       </UserProvider>
     </Router>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useUser } from '../contexts/UserContext';
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import eye icons
 import './Login.css';
 
 const CreateAccount = () => {
@@ -17,6 +18,12 @@ const CreateAccount = () => {
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Add state variables for password visibility and focus
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
 
   const validateForm = () => {
     const newErrors = {};
@@ -45,6 +52,34 @@ const CreateAccount = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevState => ({ ...prevState, [name]: value }));
+  };
+
+  // Handle password field focus
+  const handlePasswordFocus = () => {
+    setPasswordFocused(true);
+  };
+
+  // Handle password field blur
+  const handlePasswordBlur = () => {
+    setTimeout(() => {
+      if (!document.activeElement.classList.contains('password-toggle')) {
+        setPasswordFocused(false);
+      }
+    }, 10);
+  };
+
+  // Handle confirm password field focus
+  const handleConfirmPasswordFocus = () => {
+    setConfirmPasswordFocused(true);
+  };
+
+  // Handle confirm password field blur
+  const handleConfirmPasswordBlur = () => {
+    setTimeout(() => {
+      if (!document.activeElement.classList.contains('password-toggle')) {
+        setConfirmPasswordFocused(false);
+      }
+    }, 100);
   };
 
   const handleSubmit = async (e) => {
@@ -111,18 +146,69 @@ const CreateAccount = () => {
     }
   };
 
-  const renderInput = (name, type, placeholder) => (
-    <>
+  // Modified renderInput to handle all fields consistently
+  const renderInput = (name, type, placeholder) => {
+  if (type === 'password') {
+    const isPassword = name === 'password';
+    const isFocused = isPassword ? passwordFocused : confirmPasswordFocused;
+    const showPass = isPassword ? showPassword : showConfirmPassword;
+    const toggleVisibility = () => {
+      if (isPassword) {
+        setShowPassword(!showPassword);
+      } else {
+        setShowConfirmPassword(!showConfirmPassword);
+      }
+    };
+    const handleFocus = isPassword ? handlePasswordFocus : handleConfirmPasswordFocus;
+    const handleBlur = isPassword ? handlePasswordBlur : handleConfirmPasswordBlur;
+
+    return (
+      <div className="input-group">
+        <label htmlFor={name}>{placeholder}</label>
+        <div className="password-group">
+          <input
+            type={showPass ? "text" : "password"}
+            id={name}
+            name={name}
+            placeholder={placeholder}
+            value={formData[name]}
+            onChange={handleChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            autoComplete="new-password"
+            className="form-input"
+          />
+          {isFocused && (
+            <button 
+              type="button" 
+              className="password-toggle" 
+              onClick={toggleVisibility}
+            >
+              {showPass ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          )}
+        </div>
+        {errors[name] && <span className="error">{errors[name]}</span>}
+      </div>
+    );
+  }
+  
+  return (
+    <div className="input-group">
+      <label htmlFor={name}>{placeholder}</label>
       <input
         type={type}
+        id={name}
         name={name}
         placeholder={placeholder}
         value={formData[name]}
         onChange={handleChange}
+        className="form-input"
       />
       {errors[name] && <span className="error">{errors[name]}</span>}
-    </>
+    </div>
   );
+};
 
   return (
     <div className="login-container">
@@ -132,18 +218,20 @@ const CreateAccount = () => {
           <h2>CREATE ACCOUNT</h2>
           {errors.submit && <div className="error-message">{errors.submit}</div>}
           <form onSubmit={handleSubmit}>
-            {renderInput('firstName', 'text', 'First Name')}
-            {renderInput('lastName', 'text', 'Last Name')}
-            {renderInput('email', 'email', 'Email')}
-            {renderInput('password', 'password', 'Password')}
-            {renderInput('confirmPassword', 'password', 'Confirm Password')}
-            {renderInput('phoneNumber', 'tel', 'Phone Number')}
-            <button type="submit" className="sign-in" disabled={isLoading}>
-              {isLoading ? 'CREATING ACCOUNT...' : 'REGISTER'}
-            </button>
-          </form>
+  <div className="form-fields">
+    {renderInput('firstName', 'text', 'First Name')}
+    {renderInput('lastName', 'text', 'Last Name')}
+    {renderInput('email', 'email', 'Email')}
+    {renderInput('phoneNumber', 'tel', 'Phone Number')}
+    {renderInput('password', 'password', 'Password')}
+    {renderInput('confirmPassword', 'password', 'Confirm Password')}
+  </div>
+  <button type="submit" className="sign-in" disabled={isLoading}>
+    {isLoading ? 'CREATING ACCOUNT...' : 'REGISTER'}
+  </button>
+</form>
           <div className="back-to-login">
-            <Link to="/" className="auth-link">Back to Login</Link>
+            <Link to="/login" className="auth-link">Back to Login</Link>
           </div>
         </div>
         <div className="login-right">

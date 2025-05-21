@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../contexts/UserContext';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import './Login.css';
 
 const Login = () => {
@@ -8,9 +9,28 @@ const Login = () => {
     const { login, continueAsGuest } = useUser();
     const [error, setError] = useState('');
     const [emailInput, setEmailInput] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [passwordFocused, setPasswordFocused] = useState(false);
 
     const handleEmailChange = (e) => {
         setEmailInput(e.target.value);
+    }; 
+
+    const handlePasswordFocus = () => {
+        setPasswordFocused(true);
+    };
+
+    const handlePasswordBlur = (e) => {
+    // Add a small delay to check if the click was on the password toggle button
+    setTimeout(() => {
+        if (!document.activeElement.classList.contains('password-toggle')) {
+            setPasswordFocused(false);
+        }
+    }, 10);
+};
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
     };
 
     // Make sure to add the async keyword here
@@ -60,7 +80,7 @@ const Login = () => {
                 if (userData.role === 'admin') {
                     navigate('/admin');
                 } else {
-                    navigate('/home-page');
+                    navigate('/');
                 }
             } catch (error) {
                 setError('Invalid email or password. Please try again.');
@@ -92,7 +112,27 @@ const Login = () => {
                             required 
                         />
                         <label htmlFor="password">Password</label>
-                        <input type="password" id="password" placeholder="Password" required />
+<div className="password-group">
+    <input 
+        type={showPassword ? "text" : "password"} 
+        id="password" 
+        placeholder="Password" 
+        onFocus={handlePasswordFocus}
+        onBlur={handlePasswordBlur}
+         autoComplete="new-password" 
+        required 
+    />
+    {passwordFocused && (
+        <button 
+            type="button" 
+            className="password-toggle" 
+            onClick={togglePasswordVisibility}
+        >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+        </button>
+    )}
+</div>
+
                         <div className="forgot">
                             <Link to="/forgot-password" className="auth-link forgot-password">
                                 Forgot Password?
@@ -100,7 +140,7 @@ const Login = () => {
                         </div>
                         
                         <div className="login-options">
-                            <button type="submit" className="sign-in">Sign In</button>
+                            <button type="submit" className="sign-in">SIGN IN</button>
                         </div>
                         
                         <div className="create-account">
@@ -113,7 +153,7 @@ const Login = () => {
                                 onClick={(e) => {
                                     e.preventDefault();
                                     continueAsGuest();
-                                    navigate('/home-page');
+                                    navigate('/');
                                 }}
                             >
                                 Continue as Guest

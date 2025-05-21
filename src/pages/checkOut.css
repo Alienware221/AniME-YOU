@@ -158,3 +158,55 @@
   border-radius: 4px;
   margin-top: 15px;
 }
+
+/* Add to checkOut.css */
+
+/* Base checkout styles first (if not already present) */
+.checkout-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.checkout-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.form-section {
+  flex: 1 1 45%;
+  min-width: 300px;
+}
+
+.cart-summary {
+  flex: 1 1 100%;
+}
+
+/* Responsive styles */
+@media (max-width: 991.98px) {
+  .checkout-form {
+    gap: 15px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .form-section {
+    flex: 1 1 100%;
+  }
+  
+  .checkout-form input,
+  .checkout-form select {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+@media (max-width: 575.98px) {
+  .checkout-container {
+    padding: 10px;
+  }
+  
+  .checkout-form {
+    gap: 10px;
+  }
+}

@@ -36,7 +36,7 @@ const ForgotPassword = () => {
             <button type="submit" className="sign-in">SUBMIT</button>
           </form>
           <div className="back-to-login">
-            <Link to="/" className="auth-link">Back to Login</Link>
+            <Link to="/login" className="auth-link">Back to Login</Link>
           </div>
         </div>
         <div className="login-right">
