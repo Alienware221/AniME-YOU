@@ -137,7 +137,6 @@ router.delete('/products/:id', async (req, res) => {
   }
 });
 
-// server/routes/adminRoutes.js - Add user management routes
 // Only admins can get all users
 router.get('/users', admin, async (req, res) => {
   try {
@@ -179,5 +178,53 @@ router.get('/stats', admin, async (req, res) => {
   // Only admins can see stats
   // ...your code
 });
+
+// Delete user
+router.delete('/users/:userId', admin, async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Make user admin
+router.put('/users/:userId/make-admin', admin, async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.userId,
+      { role: 'admin' },
+      { new: true }
+    );
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Remove admin privileges
+router.put('/users/:userId/remove-admin', admin, async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.params.userId,
+      { role: 'user' },
+      { new: true }
+    );
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 
 module.exports = router;

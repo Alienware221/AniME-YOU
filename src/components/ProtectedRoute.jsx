@@ -12,7 +12,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
 
   // For admin-only routes
   if (adminOnly) {
-    return isAdmin() ? children : <Navigate to="/home-page" />;
+    return isAdmin() ? children : <Navigate to="/" />;
   }
 
   // For regular protected routes (any logged-in user)
