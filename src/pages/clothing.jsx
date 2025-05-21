@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'; // Import hooks from React
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './categories.css';
 
 const Clothing = () => {
@@ -7,7 +7,8 @@ const Clothing = () => {
     const [clothingData, setClothingData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
+    const [sortOption, setSortOption] = useState('default');
+
     useEffect(() => {
         const loadProducts = async () => {
             try {
@@ -31,14 +32,12 @@ const Clothing = () => {
                 }
                 
                 const products = await response.json();
-                console.log('All products:', products);
                 
                 // Filter only clothing products
                 const clothingProducts = products.filter(product => 
                     product.category === 'clothing'
                 );
                 
-                console.log('Clothing products:', clothingProducts);
                 setClothingData(clothingProducts);
             } catch (err) {
                 console.error('Failed to fetch clothing products:', err);
@@ -51,29 +50,73 @@ const Clothing = () => {
         loadProducts();
     }, []);
 
-   return (
-           <div className="app">
+    // Function to handle sort change
+    const handleSortChange = (e) => {
+        setSortOption(e.target.value);
+    };
+
+    // Function to sort products based on selected option
+    const getSortedProducts = () => {
+        switch (sortOption) {
+            case 'price-low-to-high':
+                return [...clothingData].sort((a, b) => a.price - b.price);
+            case 'price-high-to-low':
+                return [...clothingData].sort((a, b) => b.price - a.price);
+            default:
+                return clothingData; // No sorting
+        }
+    };
+
+    if (loading) {
+        return <div className="loading">Loading...</div>;
+    }
+
+    if (error) {
+        return <div className="error-message">{error}</div>;
+    }
+
+    return (
+        <div className="app">
             <div className="product-section">
                 <h2 className="section-heading">CLOTHING</h2>
                 
-                {loading && <p className="loading">Loading products...</p>}
-                {error && <p className="error-message">{error}</p>}
+                {/* Sorting dropdown positioned to the right */}
+                <div className="sorting-controls">
+                    <label htmlFor="sort-select">Sort by:</label>
+                    <select 
+                        id="sort-select"
+                        className="sort-select"
+                        value={sortOption}
+                        onChange={handleSortChange}
+                    >
+                        <option value="default">Default</option>
+                        <option value="price-low-to-high">Price: Low to High</option>
+                        <option value="price-high-to-low">Price: High to Low</option>
+                    </select>
+                </div>
                 
                 <div className="product-grid">
-                    {clothingData.map(product => (
-                        <div 
-                            key={product._id || product.id} // Use _id if that's what your MongoDB uses
-                            className="product-card" 
-                            onClick={() => navigate(`/product/${product._id || product.id}`)}
-                        >
-                            <img src={product.image} alt={product.name} />
-                            <h3>{product.name}</h3>
-                            <p className="price">₱{product.price.toFixed(2)}</p>
-                        </div>
-                    ))}
+                    {getSortedProducts().length > 0 ? (
+                        getSortedProducts().map(product => (
+                            <div 
+                                key={product._id || product.id}
+                                className="product-card" 
+                                onClick={() => navigate(`/product/${product._id || product.id}`)}
+                            >
+                                <img src={product.image} alt={product.name} />
+                                <h3>{product.name}</h3>
+                                <p className="price">₱{product.price.toFixed(2)}</p>
+                            </div>
+                        ))
+                    ) : (
+                        <p className="no-products">No clothing products available at the moment.</p>
+                    )}
                 </div>
                 <hr className="bottom-line" />
             </div>
+            
+            {/* Space for footer */}
+            <div style={{ height: "200px" }}></div>
         </div>
     );
 };

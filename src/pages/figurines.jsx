@@ -7,6 +7,7 @@ const Figurines = () => {
     const [figurinesData, setFigurinesData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [sortOption, setSortOption] = useState('default');
 
     useEffect(() => {
         const loadProducts = async () => {
@@ -51,6 +52,23 @@ const Figurines = () => {
         loadProducts();
     }, []);
 
+    // Function to handle sort change
+    const handleSortChange = (e) => {
+        setSortOption(e.target.value);
+    };
+
+    // Function to sort products based on selected option
+    const getSortedProducts = () => {
+        switch (sortOption) {
+            case 'price-low-to-high':
+                return [...figurinesData].sort((a, b) => a.price - b.price);
+            case 'price-high-to-low':
+                return [...figurinesData].sort((a, b) => b.price - a.price);
+            default:
+                return figurinesData; // No sorting
+        }
+    };
+
     if (loading) {
         return <div className="loading">Loading...</div>;
     }
@@ -59,26 +77,48 @@ const Figurines = () => {
         return <div className="error-message">{error}</div>;
     }
 
-   return (
-           <div className="app">
-
+    return (
+        <div className="app">
             <div className="product-section">
                 <h2 className="section-heading">FIGURINES</h2>
+                
+                {/* Sorting dropdown positioned to the right */}
+                <div className="sorting-controls">
+                    <label htmlFor="sort-select">Sort by:</label>
+                    <select 
+                        id="sort-select"
+                        className="sort-select"
+                        value={sortOption}
+                        onChange={handleSortChange}
+                    >
+                        <option value="default">Default</option>
+                        <option value="price-low-to-high">Price: Low to High</option>
+                        <option value="price-high-to-low">Price: High to Low</option>
+                    </select>
+                </div>
+                
                 <div className="product-grid">
-                    {figurinesData.map(product => (
-                        <div 
-                            key={product._id || product.id} // Use _id if that's what your MongoDB uses
-                            className="product-card" 
-                            onClick={() => navigate(`/product/${product._id || product.id}`)}
-                        >
-                            <img src={product.image} alt={product.name} />
-                            <h3>{product.name}</h3>
-                            <p className="price">₱{product.price.toFixed(2)}</p>
-                        </div>
-                    ))}
+                    {getSortedProducts().length > 0 ? (
+                        getSortedProducts().map(product => (
+                            <div 
+                                key={product._id || product.id}
+                                className="product-card" 
+                                onClick={() => navigate(`/product/${product._id || product.id}`)}
+                            >
+                                <img src={product.image} alt={product.name} />
+                                <h3>{product.name}</h3>
+                                <p className="price">₱{product.price.toFixed(2)}</p>
+                            </div>
+                        ))
+                    ) : (
+                        <p className="no-products">No figurine products available at the moment.</p>
+                    )}
                 </div>
                 <hr className="bottom-line" />
             </div>
+
+            {/* Space for footer */}
+            <div style={{ height: "200px" }}></div>
         </div>
     );
 };

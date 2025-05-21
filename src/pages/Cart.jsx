@@ -122,6 +122,9 @@ const Cart = () => {
               </>
             )}
         </div>
+
+        {/* Space for footer */}
+            <div style={{ height: "450px" }}></div>
     </div>
   );
 };

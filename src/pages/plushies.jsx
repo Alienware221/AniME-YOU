@@ -7,6 +7,7 @@ const Plushies = () => {
     const [plushiesData, setPlushiesData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [sortOption, setSortOption] = useState('default');
 
     useEffect(() => {
         const loadProducts = async () => {
@@ -31,14 +32,12 @@ const Plushies = () => {
                 }
                 
                 const products = await response.json();
-                console.log('All products:', products);
                 
                 // Filter only plushie products
                 const plushieProducts = products.filter(product => 
                     product.category === 'plushies'
                 );
                 
-                console.log('Plushie products:', plushieProducts);
                 setPlushiesData(plushieProducts);
             } catch (err) {
                 console.error('Failed to fetch plushie products:', err);
@@ -50,6 +49,23 @@ const Plushies = () => {
 
         loadProducts();
     }, []);
+
+    // Function to handle sort change
+    const handleSortChange = (e) => {
+        setSortOption(e.target.value);
+    };
+
+    // Function to sort products based on selected option
+    const getSortedProducts = () => {
+        switch (sortOption) {
+            case 'price-low-to-high':
+                return [...plushiesData].sort((a, b) => a.price - b.price);
+            case 'price-high-to-low':
+                return [...plushiesData].sort((a, b) => b.price - a.price);
+            default:
+                return plushiesData; // No sorting
+        }
+    };
 
     if (loading) {
         return <div className="loading">Loading...</div>;
@@ -63,9 +79,25 @@ const Plushies = () => {
         <div className="app">
             <div className="product-section">
                 <h2 className="section-heading">PLUSHIES</h2>
+                
+                {/* Sorting dropdown positioned to the right */}
+                <div className="sorting-controls">
+                    <label htmlFor="sort-select">Sort by:</label>
+                    <select 
+                        id="sort-select"
+                        className="sort-select"
+                        value={sortOption}
+                        onChange={handleSortChange}
+                    >
+                        <option value="default">Default</option>
+                        <option value="price-low-to-high">Price: Low to High</option>
+                        <option value="price-high-to-low">Price: High to Low</option>
+                    </select>
+                </div>
+                
                 <div className="product-grid">
-                    {plushiesData.length > 0 ? (
-                        plushiesData.map(product => (
+                    {getSortedProducts().length > 0 ? (
+                        getSortedProducts().map(product => (
                             <div 
                                 key={product._id || product.id}
                                 className="product-card" 
@@ -82,6 +114,9 @@ const Plushies = () => {
                 </div>
                 <hr className="bottom-line" />
             </div>
+            
+            {/* Space for footer */}
+            <div style={{ height: "200px" }}></div>
         </div>
     );
 };

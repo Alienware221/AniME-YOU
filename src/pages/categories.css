@@ -470,6 +470,30 @@ text-align: center;
   background-color: #b91c1c;
 }
 
+.sorting-controls {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    justify-content: flex-end;
+}
+
+.sort-select {
+    margin-left: 10px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    cursor: pointer;
+}
+
+.sort-select:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+
+
+
 /* Responsive Design */
 @media (max-width: 992px) {
   .product-detail-container {

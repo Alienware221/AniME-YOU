@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaHeart, FaCog, FaCreditCard, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaHeart, FaCog,FaUser, FaCreditCard, FaMapMarkerAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import './profile.css';
 import { useUser } from '../contexts/UserContext';
@@ -158,109 +158,108 @@ const Address = () => {
     };
 
     return (
-        <div className="app">
-            <div className="profile-main">
+        <div className="app" style={{ minHeight: "100vh" }}>
+            <div className="profile-main" style={{ minHeight: "calc(100vh - 150px)", paddingBottom: "50px" }}>
                 <aside className="sidebar">
                     <div className="profile-info">
                         <div className="avatar-placeholder">👤</div>
                         <h2>{user ? (user.firstName || user.name || 'Guest') : 'Guest'}</h2>
-                        <div className="profile-stats">
-                            <p>
-                                Coupons: <span className="clickable-stat">{user?.coupons || 0}</span>
-                            </p>
-                            <p>
-                                Reviews: <span className="clickable-stat">{user?.reviews || 0}</span>
-                            </p>
-                            <p>
-                                Phone: <span className="clickable-stat">{user?.phone || user?.phoneNumber || 'Not set'}</span>
-                            </p>
-                        </div>
                     </div>
                     <nav className="menu-list">
-                        <Link to="/wishlist" className="menu-item"><FaHeart /> Wishlist</Link>
+                        <Link to="/profile" className="menu-item"><FaUser /> Profile</Link>
                         <Link to="/settings" className="menu-item"><FaCog /> Settings</Link>
                         <Link to="/payments" className="menu-item"><FaCreditCard /> Payments</Link>
                         <Link to="/address" className="menu-item active"><FaMapMarkerAlt /> Address</Link>
                     </nav>
                 </aside>
-                <div className="main-content">
-                    <h2>Manage Addresses</h2>
-                    
-                    {/* Display the current saved address */}
-                    {savedAddress && (
-                        <div className="saved-address">
-                            <h3>Current Saved Address</h3>
-                            <div className="address-card">
+
+                <div className="main-content" style={{ minHeight: "calc(100vh - 200px)" }}>
+                    <div className="address-section">
+                        <h2>Shipping Address</h2>
+                        
+                        {message.text && (
+                            <div className={`message ${message.type}`}>
+                                {message.text}
+                            </div>
+                        )}
+                        
+                        {/* Display the current saved address */}
+                        {savedAddress && (
+                            <div className="saved-address">
+                                <h3>Current Address</h3>
                                 <p>{savedAddress.addressLine1}</p>
                                 {savedAddress.addressLine2 && <p>{savedAddress.addressLine2}</p>}
                                 <p>{savedAddress.city}, {savedAddress.state} {savedAddress.zip}</p>
                                 <p>{savedAddress.country}</p>
-                                <p>Telephone: {savedAddress.telephone}</p>
+                                {savedAddress.telephone && <p>Phone: {savedAddress.telephone}</p>}
                             </div>
-                            <hr />
-                        </div>
-                    )}
-                    
-                    {message.text && (
-                        <div className={`message ${message.type}`}>
-                            {message.text}
-                        </div>
-                    )}
-                    
-                    <form onSubmit={handleSubmit} className="address-form">
-                        <div className="form-group">
-                            <label htmlFor="addressLine1">Address Line 1 *</label>
-                            <input type="text" id="addressLine1" name="addressLine1" required value={formData.addressLine1 || ''} onChange={handleChange} />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="addressLine2">Address Line 2</label>
-                            <input type="text" id="addressLine2" name="addressLine2" value={formData.addressLine2 || ''} onChange={handleChange} />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="city">City *</label>
-                            <input type="text" id="city" name="city" required value={formData.city || ''} onChange={handleChange} />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="state">State/Province *</label>
-                            <select id="state" name="state" required value={formData.state || ''} onChange={handleChange}>
-                                <option value="">Select</option>
-                                <option value="Metro Manila">Metro Manila</option>
-                                <option value="Cebu">Cebu</option>
-                                <option value="Davao">Davao</option>
-                                <option value="Rizal">Rizal</option>
-                                <option value="Bulacan">Bulacan</option>
-                                <option value="Laguna">Laguna</option>
-                                <option value="Cavite">Cavite</option>
-                                <option value="Pampanga">Pampanga</option>
-                                <option value="Batangas">Batangas</option>
-                                <option value="Iloilo">Iloilo</option>
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="zip">Zip/Postal Code *</label>
-                            <input type="text" id="zip" name="zip" required value={formData.zip || ''} onChange={handleChange} />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="country">Country *</label>
-                            <select id="country" name="country" required value={formData.country || ''} onChange={handleChange}>
-                                <option value="">Select</option>
-                                <option value="Philippines">Philippines</option>
-                                <option value="Japan">Japan</option>
-                                <option value="United States">United States</option>
-                                <option value="South Korea">South Korea</option>
-                                <option value="China">China</option>
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="telephone">Telephone *</label>
-                            <input type="text" id="telephone" name="telephone" required value={formData.telephone || ''} onChange={handleChange} />
-                        </div>
-                        <button type="submit" className="save-button" disabled={isLoading}>
-                            {isLoading ? 'Saving...' : 'Save Address'}
-                        </button>
-                    </form>
+                        )}
+                        
+                        <form onSubmit={handleSubmit} className="address-form">
+                            <div className="form-group">
+                                <label htmlFor="addressLine1">Address Line 1 *</label>
+                                <input type="text" id="addressLine1" name="addressLine1" required value={formData.addressLine1 || ''} onChange={handleChange} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="addressLine2">Address Line 2</label>
+                                <input type="text" id="addressLine2" name="addressLine2" value={formData.addressLine2 || ''} onChange={handleChange} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="city">City *</label>
+                                <input type="text" id="city" name="city" required value={formData.city || ''} onChange={handleChange} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="state">State/Province *</label>
+                                <select id="state" name="state" required value={formData.state || ''} onChange={handleChange}>
+                                    <option value="">Select</option>
+                                    <option value="Metro Manila">Metro Manila</option>
+                                    <option value="Cebu">Cebu</option>
+                                    <option value="Davao">Davao</option>
+                                    <option value="Rizal">Rizal</option>
+                                    <option value="Bulacan">Bulacan</option>
+                                    <option value="Laguna">Laguna</option>
+                                    <option value="Cavite">Cavite</option>
+                                    <option value="Pampanga">Pampanga</option>
+                                    <option value="Batangas">Batangas</option>
+                                    <option value="Iloilo">Iloilo</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="zip">Zip/Postal Code *</label>
+                                <input type="text" id="zip" name="zip" required value={formData.zip || ''} onChange={handleChange} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="country">Country *</label>
+                                <select id="country" name="country" required value={formData.country || ''} onChange={handleChange}>
+                                    <option value="">Select</option>
+                                    <option value="Philippines">Philippines</option>
+                                    <option value="Japan">Japan</option>
+                                    <option value="United States">United States</option>
+                                    <option value="South Korea">South Korea</option>
+                                    <option value="China">China</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="telephone">Telephone *</label>
+                                <input type="text" id="telephone" name="telephone" required value={formData.telephone || ''} onChange={handleChange} />
+                            </div>
+                            
+                            <div className="form-actions">
+                                <button 
+                                    type="submit" 
+                                    className="save-button" 
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? 'Saving...' : 'Save Address'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
+            
+           {/* Space for footer */}
+            <div style={{ height: "150px" }}></div>
         </div>
     );
 };

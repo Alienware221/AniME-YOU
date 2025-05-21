@@ -1,130 +1,86 @@
-body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  
+* {
+  box-sizing: border-box;
+}
 
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-x: hidden; /* Prevent horizontal scrolling on mobile */
+}
   
-  /* Carousel */
-  .carousel {
-    width: 100%;
-    height: calc(99.5vh - 70px);
-    overflow: hidden;
-    margin-top: 0;
-  }
+/* Carousel */
+.carousel {
+  width: 100%;
+  height: calc(99.5vh - 70px);
+  overflow: hidden;
+  margin-top: 0;
+}
   
-  .carousel img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: opacity 0.5s ease-in-out;
-  }
+.carousel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.5s ease-in-out;
+}
   
-  /* Section */
-  .product-section {
+/* Section */
+.product-section {
   padding: 2rem 1rem;
   text-align: center;
   border-left: 8px solid; /* Add a left border */
   margin: 0;
 }
 
-  .section-title {
+.section-title {
   font-size: 2rem; /* Increased from 1.5rem */
   font-weight: 700;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2); /* Add shadow for better visibility */
   margin-bottom: 1.5rem;
 }
   
-  .product-section h2 {
+.product-section h2 {
   text-align: left;
-  padding-left: 3rem;
+  padding-left: 1.5rem;
   color: white;
-  font-size: 3.2rem; /* Slightly increased */
-  margin-bottom: 5rem;
-  line-height: 1.2; /* Adjusted from 0.2 for better spacing */
-  letter-spacing: 0.5px; /* Improved readability */
-  position: relative; /* For possible decorative elements */
+  font-size: 2.5rem;
+  margin-bottom: 3rem;
+  line-height: 1.2;
+  letter-spacing: 0.5px;
+  position: relative;
 }
   
-  .product-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2rem;
-  }
-  
-  .product-card {
-    margin-bottom: 2rem;
-    background: white;
-    padding: 1rem;
-    width: 217px;
-    text-align: left;
-    transition: transform 0.3s;
-  }
-  
-  .product-card:hover {
-    transform: scale(1.05);
-  }
-  
-  .product-card img {
-    width: 215px;
-    height: 220px;
-    object-fit: cover;
-    border-radius: 8px;
-  }
-  
-  .product-title {
-    font-weight: bold;
-    margin-top: 0.5rem;
-  }
-  
-  .product-subtitle,
-  .product-price {
-    font-size: 0.85rem;
-    color: #555;
-  }
-  
-  .desktop-section {
-  background-color: #f87171;
-  border-color: #ef4444; /* Slightly darker shade for border */
+.product-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
 }
   
-  .figurines-section {
-  background-color: #60a5fa;
-  border-color: #3b82f6; /* Slightly darker shade for border */
-}
-
-.plushies-section {
-  background-color: #f87f39;
-  border-color: #ea580c; /* Slightly darker shade for border */
-}
-
-.clothing-section {
-  background-color: #34d399;
-  border-color: #10b981; /* Slightly darker shade for border */
-}
-
-.varieties-section {
-  background-color: #a78bfa;
-  border-color: #8b5cf6; /* Slightly darker shade for border */
-}
-
 .product-card {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   background: white;
   padding: 1rem;
-  width: 217px;
+  width: 100%;
+  max-width: 280px;
   text-align: left;
   transition: transform 0.3s, box-shadow 0.3s;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-
+  
 .product-card:hover {
-  transform: scale(1.05);
+  transform: scale(1.03);
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
 }
-
+  
+.product-card img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  border-radius: 8px;
+}
+  
 .product-title {
   font-weight: bold;
   margin-top: 0.8rem;
@@ -132,13 +88,39 @@ body {
   color: #1a1a1a;
 }
   
-  /*view all button*/
-  .view-all-container {
-    margin-top: 2rem;
-    text-align: center;
-  }
+.product-subtitle,
+.product-price {
+  font-size: 0.85rem;
+  color: #555;
+}
+  
+.desktop-section {
+  background-color: #f87171;
+  border-color: #ef4444;
+}
+  
+.figurines-section {
+  background-color: #60a5fa;
+  border-color: #3b82f6;
+}
 
-  .desktop-section .product-card {
+.plushies-section {
+  background-color: #f87f39;
+  border-color: #ea580c;
+}
+
+.clothing-section {
+  background-color: #34d399;
+  border-color: #10b981;
+}
+
+.varieties-section {
+  background-color: #a78bfa;
+  border-color: #8b5cf6;
+}
+
+/* Card bottom borders */
+.desktop-section .product-card {
   border-bottom: 3px solid #f87171;
 }
 
@@ -158,113 +140,192 @@ body {
   border-bottom: 3px solid #a78bfa;
 }
   
-  .view-all {
-    margin-top: 2rem;
-    padding: 0.5rem 1.5rem;
-    background-color: white;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: opacity 0.2s ease;
-    text-decoration: none;
+/* View all button */
+.view-all-container {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.view-all {
+  margin-top: 2rem;
+  padding: 0.5rem 1.5rem;
+  background-color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: opacity 0.2s ease;
+  text-decoration: none;
+}
+  
+.desktop-section .view-all {
+  color: #f87171;
+}
+  
+.figurines-section .view-all {
+  color: #60a5fa;
+}
+  
+.plushies-section .view-all {
+  color: #f87f39;
+}
+  
+.clothing-section .view-all {
+  color: #34d399;
+}
+  
+.varieties-section .view-all {
+  color: #a78bfa;
+}
+  
+.desktop-section .view-all:hover,
+.figurines-section .view-all:hover,
+.plushies-section .view-all:hover,
+.clothing-section .view-all:hover,
+.varieties-section .view-all:hover {
+  opacity: 0.8;
+}
+  
+/* Pop up */
+.disclaimer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+  
+.disclaimer-box {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
+}
+  
+.disclaimer-logo {
+  width: 140px;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto 20px auto;
+  display: block;
+}
+  
+.disclaimer-header {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+  
+.disclaimer-text {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+  
+.disclaimer-button {
+  padding: 10px 24px;
+  font-size: 16px;
+  background-color: rgb(250, 188, 16);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+  
+.disclaimer-button:hover {
+  background-color: #373737;
+}
+
+.product-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+  
+.product-card-link:hover {
+  text-decoration: none;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 992px) {
+  .carousel {
+    height: 60vh;
   }
   
-  .desktop-section .view-all {
-    color: #f87171;
+  .product-section h2 {
+    font-size: 2.2rem;
+    padding-left: 1rem;
+    margin-bottom: 2rem;
   }
   
-  .figurines-section .view-all {
-    color: #60a5fa;
+  .product-list {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .carousel {
+    height: 50vh;
   }
   
-  .plushies-section .view-all {
-    color: #f87f39;
+  .product-section {
+    padding: 1.5rem 0.5rem;
+    border-left-width: 5px;
   }
   
-  .clothing-section .view-all {
-    color: #34d399;
+  .product-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
   }
   
-  .varieties-section .view-all {
-    color: #a78bfa;
+  .section-title {
+    font-size: 1.6rem;
   }
   
-  .desktop-section .view-all:hover,
-  .figurines-section .view-all:hover,
-  .plushies-section .view-all:hover,
-  .clothing-section .view-all:hover,
-  .varieties-section .view-all:hover {
-    opacity: 0.8;
+  .product-card {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .carousel {
+    height: 40vh;
   }
   
+  .product-section h2 {
+    font-size: 1.5rem;
+    padding-left: 0.7rem;
+    text-align: center;
+  }
   
-  
-  /*Pop up*/
-  .disclaimer-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.85);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
+  .section-title {
+    font-size: 1.4rem;
   }
   
   .disclaimer-box {
-    background-color: #fff;
-    padding: 40px 60px;
-    border-radius: 12px;
-    text-align: center;
-    max-width: 500px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
-  }
-  
-  .disclaimer-logo {
-    width: 180px;
-    max-width: 100%;
-    height: auto;
-    margin: 0 auto 20px auto;
-    display: block;
+    padding: 1.5rem;
   }
   
   .disclaimer-header {
-    font-size: 25px;
-    font-weight: bold;
-    margin-bottom: 10px;
+    font-size: 1.3rem;
   }
   
   .disclaimer-text {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 25px;
+    font-size: 0.9rem;
   }
   
   .disclaimer-button {
-    padding: 10px 24px;
-    font-size: 16px;
-    background-color: rgb(250, 188, 16);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s;
+    padding: 8px 20px;
+    font-size: 14px;
   }
-  
-  .disclaimer-button:hover {
-    background-color: #373737;
-  }
-
-  .product-card-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-  }
-  
-  .product-card-link:hover {
-    text-decoration: none;
-  }
-  
+}

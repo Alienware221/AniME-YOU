@@ -57,7 +57,7 @@ const ProductPage = () => {
       <div className="not-found-container">
         <h2>Product Not Found</h2>
         <p>The product you're looking for doesn't exist or has been removed.</p>
-        <button onClick={() => navigate('/home-page')}>Return to Homepage</button>
+        <button onClick={() => navigate('/')}>Return to Homepage</button>
       </div>
     );
   }
@@ -131,8 +131,7 @@ const ProductPage = () => {
           <circle cx="9" cy="21" r="1" />
           <circle cx="20" cy="21" r="1" />
           <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-        </svg>
-        Add to Cart
+        </svg>     Add to Cart
       </button>
     ) : (
       <button className="out-of-stock-btn" disabled>
@@ -161,56 +160,6 @@ const ProductPage = () => {
         </div>
         <hr className="bottom-line" />
       </div>
-
-      {/* Footer - Using the exact same structure as in your categories pages */}
-      <footer className="footer">
-        <div className="footer-columns">
-          {/* Left Column */}
-          <div className="footer-column left-column">
-            <img src="/assets/logo.png" alt="Logo" className="footer-logo" />
-            <h3 className="footer-left">Follow Us</h3>
-            <div className="social-icons">
-              <img src="/assets/fb.png" alt="Facebook" />
-              <img src="/assets/ig.png" alt="Instagram" />
-              <img src="/assets/tt.png" alt="TikTok" />
-            </div>
-          </div>
-
-          {/* Right Columns Group */}
-          <div className="right-columns-group">
-            <div className="footer-column">
-              <h3 className="footer-heading">Customer Support</h3>
-              <ul>
-                <li>FAQs</li>
-                <li>+63 1234 5678</li>
-                <li>Track Order</li>
-                <li>Return Policy</li>
-              </ul>
-            </div>
-            <div className="footer-column">
-              <h3 className="footer-heading">Explore</h3>
-              <ul>
-                <li>All Products</li>
-                <li>New Offers</li>
-                <li>About Us</li>
-                <li>Homepage</li>
-              </ul>
-            </div>
-            <div className="footer-column right-column">
-              <h3 className="footer-heading">Get More Updates</h3>
-              <p className="footer-sentence">Join us and receive updates on the best offers and new items!</p>
-              <form className="subscribe-form">
-                <div className="subscribe-wrapper">
-                  <input type="email" placeholder="Your email" />
-                  <button type="submit">I'm in</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-
-        <p className="footer-bottom">&copy; 2025 Anime&You. All rights reserved.</p>
-      </footer>
     </div>
   );
 };
