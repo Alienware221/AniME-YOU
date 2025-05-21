@@ -8,16 +8,14 @@
       "type": "image/x-icon"
     },
     {
-      "src": "assets/anime-logo-192.png",
+      "src": "assets/anime-logo.png",
       "type": "image/png",
-      "sizes": "192x192",
-      "purpose": "any maskable"
+      "sizes": "192x192"
     },
     {
-      "src": "assets/anime-logo-512.png",
+      "src": "assets/anime-logo.png",
       "type": "image/png",
-      "sizes": "512x512",
-      "purpose": "any maskable"
+      "sizes": "512x512"
     }
   ],
   "start_url": ".",
