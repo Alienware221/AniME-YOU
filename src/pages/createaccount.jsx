@@ -120,22 +120,29 @@ const CreateAccount = () => {
       }
       
       // If registration is successful, create a user object for the frontend
+      // Important: Use all data from the backend response first, then add/override specific properties
       const frontendUserData = {
+        ...data.user, // Include ALL user data from the backend response
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         phoneNumber: formData.phoneNumber,
         isLoggedIn: true,
-        registrationDate: new Date().toISOString(),
-        role: 'user',
-        ...(data.user || {}) // Include any additional user data from the response
+        token: data.token, // Make sure to store the token
+        registrationDate: data.user?.registrationDate || new Date().toISOString(),
+        address: data.user?.address || {}
       };
       
       // Store user data and log them in
       login(frontendUserData);
       
-      // Navigate to homepage
-      navigate('/home-page');
+      // Also store token separately if your auth system needs it
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+      }
+      
+      // Navigate to root route instead of home-page
+      navigate('/');
     } catch (error) {
       console.error('Registration error:', error);
       setErrors({ 

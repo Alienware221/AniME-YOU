@@ -18,11 +18,15 @@ export const UserProvider = ({ children }) => {
 
   // Updated login function that handles both cases
   const login = async (emailOrUserData, password) => {
-    // Case 1: If a user object is passed directly (e.g., for admin bypass)
+    // Case 1: If a user object is passed directly (e.g., for admin bypass or registration)
     if (typeof emailOrUserData === 'object' && emailOrUserData !== null) {
       const userData = emailOrUserData;
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
+      // Store token separately if provided
+      if (userData.token) {
+        localStorage.setItem('token', userData.token);
+      }
       return true;
     }
     
@@ -44,9 +48,23 @@ export const UserProvider = ({ children }) => {
         throw new Error('Login failed');
       }
 
-      const userData = await response.json();
+      const data = await response.json();
+      
+      // Create a comprehensive user object with all fields from the API
+      const userData = {
+        ...data.user, // Include all user data from response
+        isLoggedIn: true,
+        token: data.token // Make sure token is included
+      };
+      
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
+      
+      // Store token separately if needed
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+      }
+      
       return true;
     } catch (error) {
       console.error('Login error:', error);
@@ -58,7 +76,9 @@ export const UserProvider = ({ children }) => {
     const guestData = {
       isGuest: true,
       role: 'guest',
-      name: 'Guest'
+      name: 'Guest',
+      coupons: 0,
+      reviews: 0
     };
     setUser(guestData);
     localStorage.setItem('user', JSON.stringify(guestData));
@@ -68,6 +88,7 @@ export const UserProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
   };
 
   // Update user data

@@ -8,6 +8,7 @@ const Login = () => {
     const navigate = useNavigate();
     const { login, continueAsGuest } = useUser();
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const [emailInput, setEmailInput] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [passwordFocused, setPasswordFocused] = useState(false);
@@ -21,13 +22,13 @@ const Login = () => {
     };
 
     const handlePasswordBlur = (e) => {
-    // Add a small delay to check if the click was on the password toggle button
-    setTimeout(() => {
-        if (!document.activeElement.classList.contains('password-toggle')) {
-            setPasswordFocused(false);
-        }
-    }, 10);
-};
+        // Add a small delay to check if the click was on the password toggle button
+        setTimeout(() => {
+            if (!document.activeElement.classList.contains('password-toggle')) {
+                setPasswordFocused(false);
+            }
+        }, 10);
+    };
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -36,6 +37,8 @@ const Login = () => {
     // Make sure to add the async keyword here
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setLoading(true);
+        setError('');
         const email = event.target.email.value;
         const password = event.target.password.value;
         
@@ -46,13 +49,20 @@ const Login = () => {
                 firstName: 'Admin',
                 lastName: 'User',
                 email: 'admin',
+                phone: 'N/A',
+                phoneNumber: 'N/A',
                 role: 'admin',
                 isLoggedIn: true,
-                token: 'admin-token' // Add a dummy token
+                isGuest: false,
+                token: 'admin-token',
+                registrationDate: new Date().toISOString(),
+                createdAt: new Date().toISOString(),
+                coupons: 0,
+                reviews: 0
             };
             
             // Log in as admin and redirect
-            login(adminData);
+            await login(adminData);
             navigate('/admin');
             return;
         }
@@ -74,18 +84,60 @@ const Login = () => {
                 }
                 
                 // Get the full user data including token from your server
-                const userData = await response.json();
-                login(userData);
+                const data = await response.json();
                 
-                if (userData.role === 'admin') {
-                    navigate('/admin');
+                console.log("Data received from API:", data); // Debug log
+                
+                // Create a comprehensive user object with all fields from the API response
+                const userData = {
+                    ...data.user, // Include all user data from the API response
+                    isLoggedIn: true,
+                    isGuest: false,
+                    role: data.user?.role || 'user',
+                    token: data.token,
+                    // Make sure all these properties exist explicitly
+                    firstName: data.user?.firstName || data.firstName || 'User',
+                    lastName: data.user?.lastName || data.lastName || '',
+                    email: data.user?.email || email || '',
+                    // Handle phone in multiple formats
+                    phone: data.user?.phone || data.user?.phoneNumber || data.phone || data.phoneNumber || '',
+                    phoneNumber: data.user?.phoneNumber || data.user?.phone || data.phoneNumber || data.phone || '',
+                    // Handle registration date in multiple formats
+                    registrationDate: data.user?.registrationDate || data.user?.createdAt || data.registrationDate || data.createdAt || new Date().toISOString(),
+                    createdAt: data.user?.createdAt || data.user?.registrationDate || data.createdAt || data.registrationDate || new Date().toISOString()
+                };
+                
+                // If key stats are missing, add default values
+                if (userData.coupons === undefined) {
+                    userData.coupons = 0;
+                }
+                if (userData.reviews === undefined) {
+                    userData.reviews = 0;
+                }
+                
+                console.log("User data before login:", userData); // Debug log
+                
+                // Call the login function with the complete user data
+                const success = await login(userData);
+                
+                if (success) {
+                    if (userData.role === 'admin') {
+                        navigate('/admin');
+                    } else {
+                        navigate('/');
+                    }
                 } else {
-                    navigate('/');
+                    setError('Login failed. Please try again.');
                 }
             } catch (error) {
                 setError('Invalid email or password. Please try again.');
                 console.error('Login error:', error);
+            } finally {
+                setLoading(false);
             }
+        } else {
+            setError('Email and password are required');
+            setLoading(false);
         }
     };
 
@@ -112,26 +164,26 @@ const Login = () => {
                             required 
                         />
                         <label htmlFor="password">Password</label>
-<div className="password-group">
-    <input 
-        type={showPassword ? "text" : "password"} 
-        id="password" 
-        placeholder="Password" 
-        onFocus={handlePasswordFocus}
-        onBlur={handlePasswordBlur}
-         autoComplete="new-password" 
-        required 
-    />
-    {passwordFocused && (
-        <button 
-            type="button" 
-            className="password-toggle" 
-            onClick={togglePasswordVisibility}
-        >
-            {showPassword ? <FaEyeSlash /> : <FaEye />}
-        </button>
-    )}
-</div>
+                        <div className="password-group">
+                            <input 
+                                type={showPassword ? "text" : "password"} 
+                                id="password" 
+                                placeholder="Password" 
+                                onFocus={handlePasswordFocus}
+                                onBlur={handlePasswordBlur}
+                                autoComplete="current-password" 
+                                required 
+                            />
+                            {passwordFocused && (
+                                <button 
+                                    type="button" 
+                                    className="password-toggle" 
+                                    onClick={togglePasswordVisibility}
+                                >
+                                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                </button>
+                            )}
+                        </div>
 
                         <div className="forgot">
                             <Link to="/forgot-password" className="auth-link forgot-password">
@@ -140,7 +192,9 @@ const Login = () => {
                         </div>
                         
                         <div className="login-options">
-                            <button type="submit" className="sign-in">SIGN IN</button>
+                            <button type="submit" className="sign-in" disabled={loading}>
+                                {loading ? 'SIGNING IN...' : 'SIGN IN'}
+                            </button>
                         </div>
                         
                         <div className="create-account">

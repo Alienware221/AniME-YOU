@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import './profile.css';
 import { useUser } from '../contexts/UserContext';
 
-
 const Address = () => {
     const { user, updateUser, setUser } = useUser();
     const [formData, setFormData] = useState({
@@ -14,146 +13,251 @@ const Address = () => {
         state: '',
         zip: '',
         country: '',
-        telephone: '',
-        fax: '',
-        vatNumber: ''
+        telephone: ''
     });
+    const [isLoading, setIsLoading] = useState(false);
+    const [message, setMessage] = useState({ text: '', type: '' });
+    const [savedAddress, setSavedAddress] = useState(null);
+    const [isInitialized, setIsInitialized] = useState(false);
 
     useEffect(() => {
-      const storedUser = JSON.parse(localStorage.getItem('user'));
-  
-      if (storedUser) {
-          setUser(storedUser); // This can go here if the user doesn't change when the address is updated 
-          setFormData({ ...storedUser.address }); 
-      } else if (user && user.address) { // This condition won't change infinitely, so this logic will still be called once to initialize the form.
-          setFormData({ ...user.address });
-      }
-  
-  }, []);
+        if (!isInitialized) {
+            console.log("Initializing form data...");
+            
+            // First check localStorage
+            const storedUser = JSON.parse(localStorage.getItem('user'));
+            console.log("Stored user from localStorage:", storedUser);
+      
+            if (storedUser && storedUser.address && Object.keys(storedUser.address).length > 0) {
+                setUser(storedUser);
+                setFormData({ ...storedUser.address });
+                setSavedAddress({ ...storedUser.address });
+            } else if (user && user.address && Object.keys(user.address).length > 0) {
+                setFormData({ ...user.address });
+                setSavedAddress({ ...user.address });
+            } else {
+                // If no address in localStorage or current user state, fetch from API
+                fetchUserAddress();
+            }
+            
+            setIsInitialized(true);
+        }
+    }, [isInitialized, user, setUser]);
+
+    // Add this new function to fetch address from the backend
+    const fetchUserAddress = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.log("No token found, skipping address fetch");
+                return;
+            }
+
+            setIsLoading(true);
+            const response = await fetch('https://animeyoubackend.onrender.com/api/users/profile', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Error fetching user profile: ${response.status}`);
+            }
+            
+            const userData = await response.json();
+            console.log("User profile data from API:", userData);
+            
+            if (userData.address && Object.keys(userData.address).length > 0) {
+                // Update local state with address from backend
+                setFormData({ ...userData.address });
+                setSavedAddress({ ...userData.address });
+                
+                // Update user context and localStorage to include address
+                const updatedUser = { ...user, address: userData.address };
+                updateUser(updatedUser);
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+                
+                setMessage({ text: 'Address loaded from database', type: 'success' });
+            }
+        } catch (error) {
+            console.error("Error fetching user address:", error);
+            setMessage({ text: 'Could not load address from database', type: 'error' });
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        console.log(`Updating ${name} to: ${value}`);
+        
+        // Use the function form of setState to ensure you're working with the latest state
+        setFormData(prevData => {
+            const newData = { ...prevData, [name]: value };
+            console.log("New form data:", newData);
+            return newData;
+        });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
+        setMessage({ text: '', type: '' });
 
         try {
+            // First, update the address in the backend
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('You must be logged in to update your address');
+            }
+
+            console.log("Sending update to:", 'https://animeyoubackend.onrender.com/api/users/update-address');
+            console.log("With payload:", {
+                userId: user._id,
+                address: formData
+            });
+
+            const response = await fetch('https://animeyoubackend.onrender.com/api/users/update-address', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    userId: user._id,
+                    address: formData
+                })
+            });
+
+            // Check if the response is OK before trying to parse JSON
+            if (!response.ok) {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `Error: ${response.status} ${response.statusText}`);
+                } else {
+                    throw new Error(`Server error: ${response.status} ${response.statusText}`);
+                }
+            }
+            
+            const data = await response.json();
+            
+            // If backend update was successful, update local state and storage
             const updatedUser = { ...user, address: formData };
-            await updateUser(updatedUser);
-            localStorage.setItem('user', JSON.stringify(updatedUser)); // Update localStorage
+            updateUser(updatedUser);
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            setSavedAddress({ ...formData });
+            
+            setMessage({ text: 'Address updated successfully!', type: 'success' });
         } catch (error) {
             console.error("Error updating address:", error);
-            // TODO: Display error message to user.
+            setMessage({ text: error.message || 'Failed to update address. Please try again.', type: 'error' });
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
         <div className="app">
-            <nav className="navbar">
-                <div className="logo">
-                    <Link to="/home-page">
-                        <img src="/assets/logo.png" alt="Brand Logo" />
-                    </Link>
-                </div>
-                <ul className="nav-links">
-                    <li><Link to="/desktop">DESKTOP</Link></li>
-                    <li><Link to="/figurines">FIGURINES</Link></li>
-                    <li><Link to="/plushies">PLUSHIES</Link></li>
-                    <li><Link to="/clothing">CLOTHING</Link></li>
-                    <li><Link to="/varieties">VARIETIES</Link></li>
-                </ul>
-                <div className="nav-icons">
-                    <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                        <circle cx="11" cy="11" r="8" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                    </svg>
-                    <Link to="/cart">
-                        <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                            <circle cx="9" cy="21" r="1" />
-                            <circle cx="20" cy="21" r="1" />
-                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                        </svg>
-                    </Link>
-                    <Link to="/profile">
-                        <svg className="icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                            <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
-                            <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
-                            <circle cx="12" cy="7" r="4" />
-                        </svg>
-                    </Link>
-                </div>
-            </nav>
             <div className="profile-main">
                 <aside className="sidebar">
                     <div className="profile-info">
                         <div className="avatar-placeholder">👤</div>
-                        <h2>{user ? (user.firstName || user.name || 'Guest') : 'Guest'}</h2>{/* Dynamically render user's name or "Guest" */}
+                        <h2>{user ? (user.firstName || user.name || 'Guest') : 'Guest'}</h2>
                         <div className="profile-stats">
                             <p>
-                                Coupons: <span className="clickable-stat">56</span>
+                                Coupons: <span className="clickable-stat">{user?.coupons || 0}</span>
                             </p>
                             <p>
-                                Reviews: <span className="clickable-stat">350</span>
+                                Reviews: <span className="clickable-stat">{user?.reviews || 0}</span>
+                            </p>
+                            <p>
+                                Phone: <span className="clickable-stat">{user?.phone || user?.phoneNumber || 'Not set'}</span>
                             </p>
                         </div>
                     </div>
                     <nav className="menu-list">
-
                         <Link to="/wishlist" className="menu-item"><FaHeart /> Wishlist</Link>
                         <Link to="/settings" className="menu-item"><FaCog /> Settings</Link>
                         <Link to="/payments" className="menu-item"><FaCreditCard /> Payments</Link>
-                        <Link to="/address" className="menu-item"><FaMapMarkerAlt /> Address</Link>
+                        <Link to="/address" className="menu-item active"><FaMapMarkerAlt /> Address</Link>
                     </nav>
                 </aside>
                 <div className="main-content">
                     <h2>Manage Addresses</h2>
+                    
+                    {/* Display the current saved address */}
+                    {savedAddress && (
+                        <div className="saved-address">
+                            <h3>Current Saved Address</h3>
+                            <div className="address-card">
+                                <p>{savedAddress.addressLine1}</p>
+                                {savedAddress.addressLine2 && <p>{savedAddress.addressLine2}</p>}
+                                <p>{savedAddress.city}, {savedAddress.state} {savedAddress.zip}</p>
+                                <p>{savedAddress.country}</p>
+                                <p>Telephone: {savedAddress.telephone}</p>
+                            </div>
+                            <hr />
+                        </div>
+                    )}
+                    
+                    {message.text && (
+                        <div className={`message ${message.type}`}>
+                            {message.text}
+                        </div>
+                    )}
+                    
                     <form onSubmit={handleSubmit} className="address-form">
                         <div className="form-group">
                             <label htmlFor="addressLine1">Address Line 1 *</label>
-                            <input type="text" id="addressLine1" name="addressLine1" required value={formData.addressLine1} onChange={handleChange} />
+                            <input type="text" id="addressLine1" name="addressLine1" required value={formData.addressLine1 || ''} onChange={handleChange} />
                         </div>
                         <div className="form-group">
                             <label htmlFor="addressLine2">Address Line 2</label>
-                            <input type="text" id="addressLine2" name="addressLine2" value={formData.addressLine2} onChange={handleChange} />
+                            <input type="text" id="addressLine2" name="addressLine2" value={formData.addressLine2 || ''} onChange={handleChange} />
                         </div>
                         <div className="form-group">
                             <label htmlFor="city">City *</label>
-                            <input type="text" id="city" name="city" required value={formData.city} onChange={handleChange} />
+                            <input type="text" id="city" name="city" required value={formData.city || ''} onChange={handleChange} />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="state">State/Province</label>
-                            <select id="state" name="state" value={formData.state} onChange={handleChange}>
+                            <label htmlFor="state">State/Province *</label>
+                            <select id="state" name="state" required value={formData.state || ''} onChange={handleChange}>
                                 <option value="">Select</option>
-                                <option value="state1">State 1</option>
-                                <option value="state2">State 2</option>
+                                <option value="Metro Manila">Metro Manila</option>
+                                <option value="Cebu">Cebu</option>
+                                <option value="Davao">Davao</option>
+                                <option value="Rizal">Rizal</option>
+                                <option value="Bulacan">Bulacan</option>
+                                <option value="Laguna">Laguna</option>
+                                <option value="Cavite">Cavite</option>
+                                <option value="Pampanga">Pampanga</option>
+                                <option value="Batangas">Batangas</option>
+                                <option value="Iloilo">Iloilo</option>
                             </select>
                         </div>
                         <div className="form-group">
                             <label htmlFor="zip">Zip/Postal Code *</label>
-                            <input type="text" id="zip" name="zip" required value={formData.zip} onChange={handleChange} />
+                            <input type="text" id="zip" name="zip" required value={formData.zip || ''} onChange={handleChange} />
                         </div>
                         <div className="form-group">
                             <label htmlFor="country">Country *</label>
-                            <select id="country" name="country" required value={formData.country} onChange={handleChange}>
+                            <select id="country" name="country" required value={formData.country || ''} onChange={handleChange}>
                                 <option value="">Select</option>
-                                <option value="country1">Country 1</option>
-                                <option value="country2">Country 2</option>
+                                <option value="Philippines">Philippines</option>
+                                <option value="Japan">Japan</option>
+                                <option value="United States">United States</option>
+                                <option value="South Korea">South Korea</option>
+                                <option value="China">China</option>
                             </select>
                         </div>
                         <div className="form-group">
                             <label htmlFor="telephone">Telephone *</label>
-                            <input type="text" id="telephone" name="telephone" required value={formData.telephone} onChange={handleChange} />
+                            <input type="text" id="telephone" name="telephone" required value={formData.telephone || ''} onChange={handleChange} />
                         </div>
-                        <div className="form-group">
-                            <label htmlFor="fax">Fax</label>
-                            <input type="text" id="fax" name="fax" value={formData.fax} onChange={handleChange} />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="vatNumber">VAT Number</label>
-                            <input type="text" id="vatNumber" name="vatNumber" value={formData.vatNumber} onChange={handleChange} />
-                        </div>
-                        <button type="submit" className="save-button">Save Address</button>
+                        <button type="submit" className="save-button" disabled={isLoading}>
+                            {isLoading ? 'Saving...' : 'Save Address'}
+                        </button>
                     </form>
                 </div>
             </div>

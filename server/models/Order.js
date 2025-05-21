@@ -7,13 +7,13 @@ const orderSchema = new mongoose.Schema({
     required: true,
     ref: 'User'
   },
-  orderItems: [
+  orderItems: [  // Changed from products to orderItems
     {
       name: { type: String, required: true },
-      qty: { type: Number, required: true },
+      qty: { type: Number, required: true },  // Changed from quantity to qty
       image: { type: String, required: true },
       price: { type: Number, required: true },
-      product: {
+      product: {  // Changed from productId to product
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'Product'
@@ -24,14 +24,14 @@ const orderSchema = new mongoose.Schema({
     street: { type: String, required: true },
     city: { type: String, required: true },
     state: { type: String, required: true },
-    postalCode: { type: String, required: true },
-    country: { type: String, required: true }
+    postalCode: { type: String, required: false },
+    country: { type: String, default: 'Philippines' }
   },
   paymentMethod: {
     type: String,
-    required: true
+    default: 'cash on delivery'
   },
-  totalPrice: {
+  totalPrice: {  // Changed from totalAmount to totalPrice
     type: Number,
     required: true,
     default: 0.0
@@ -45,13 +45,14 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['processing', 'shipped', 'delivered', 'cancelled'],
-    default: 'processing'
+    enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
+    default: 'pending'
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
+  deliveredAt: {  // Added field used in orderRoutes.js
+    type: Date
   }
+}, {
+  timestamps: true  // This will maintain createdAt
 });
 
 module.exports = mongoose.model('Order', orderSchema);
