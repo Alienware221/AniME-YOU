@@ -4,6 +4,7 @@ import { Link, Route, Routes, useNavigate } from 'react-router-dom';
 import { useUser } from '../contexts/UserContext';
 import UserManagement from './admin/UserManagement';
 import OrderManagement from './admin/OrderManagement';
+import { FaSignOutAlt } from 'react-icons/fa';
 import './AdminDashboard.css';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://animeyoubackend.onrender.com';
@@ -433,7 +434,7 @@ const ProductManagement = () => {
 };
 
 const AdminDashboard = () => {
-  const { isAdmin, user } = useUser();
+  const { isAdmin, user, logout } = useUser();
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -442,6 +443,15 @@ const AdminDashboard = () => {
       navigate('/home-page');
     }
   }, [isAdmin, navigate]);
+
+  if (!isAdmin()) {
+    return <div>Access Denied</div>;
+  }
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   if (!isAdmin()) {
     return <div>Access Denied</div>;
@@ -458,6 +468,11 @@ const AdminDashboard = () => {
             <li><Link to="/admin/orders">Orders</Link></li>
           </ul>
         </nav>
+      <div className="admin-logout">
+          <button onClick={handleLogout} className="logout-btn">
+            <FaSignOutAlt /> Logout
+          </button>
+        </div>
       </div>
 
       <div className="admin-content">
@@ -468,9 +483,6 @@ const AdminDashboard = () => {
           <Route path="/" element={<div>Welcome to Admin Dashboard</div>} />
         </Routes>
       </div>
-
-      {/* Space for footer */}
-            <div style={{ height: "200px" }}></div>
     </div>
   );
 };

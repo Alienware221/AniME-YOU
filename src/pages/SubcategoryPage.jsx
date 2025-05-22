@@ -120,7 +120,7 @@ const SubcategoryPage = () => {
                             </div>
                         ))
                     ) : (
-                        !loading && <p className="no-products">No products found in this subcategory.</p>
+                        !loading && !window.location.pathname.includes('/admin') && <p className="no-products">No products found in this subcategory.</p>
                     )}
                 </div>
             </div>
