@@ -468,6 +468,9 @@ const AdminDashboard = () => {
           <Route path="/" element={<div>Welcome to Admin Dashboard</div>} />
         </Routes>
       </div>
+
+      {/* Space for footer */}
+            <div style={{ height: "200px" }}></div>
     </div>
   );
 };

@@ -329,3 +329,36 @@ body {
     font-size: 14px;
   }
 }
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 1.5rem;
+  color: #333;
+  text-align: center;
+  padding: 2rem;
+  background-color: #f8f8f8;
+  font-weight: 500;
+  position: relative;
+}
+
+/* Optional: Add a loading animation */
+.loading::after {
+  content: '';
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 3px solid #ccc;
+  border-top-color: #ff4081; /* Use your primary theme color */
+  animation: spin 1s infinite linear;
+  position: absolute;
+  margin-top: 60px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
